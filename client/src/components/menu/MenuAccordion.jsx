@@ -1,0 +1,64 @@
+import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import ProductCategoryCard from "../products/ProductCategoryCard.jsx";
+
+const sections = [
+  { id: "coffee", labelKey: "menu.coffeeCollection" },
+  { id: "cake", labelKey: "menu.cakeTama" },
+  { id: "wedding-cakes", labelKey: "menu.weddingCakes" },
+  { id: "custom-order", labelKey: "menu.createOrder" },
+];
+
+function MenuAccordion({
+  products,
+  descriptions,
+  onAddToCart,
+  renderCustomSection,
+}) {
+  const { t } = useLanguage();
+  return (
+    <div className="menu-accordion">
+      {sections.map((section, index) => {
+        const isCustom = section.id === "custom-order";
+        const categoryItems = (() => {
+          if (isCustom) return [];
+          if (section.id === "cake") {
+            return [
+              ...(products.cake || []),
+              ...(products["tama-products"] || []),
+            ];
+          }
+          return products[section.id] || [];
+        })();
+
+        return (
+          <details
+            key={section.id}
+            id={section.id}
+            open={index === 0}
+          >
+            <summary>{t(section.labelKey)}</summary>
+            <div className="accordion-panel">
+              {isCustom ? (
+                renderCustomSection()
+              ) : categoryItems.length ? (
+                <ProductCategoryCard
+                  category={section.id}
+                  description={
+                    descriptions[section.id] || t("menu.descriptionFallback")
+                  }
+                  items={categoryItems}
+                  onAddToCart={onAddToCart}
+                />
+              ) : (
+                <p>{t("menu.updatingMenu")}</p>
+              )}
+            </div>
+          </details>
+        );
+      })}
+    </div>
+  );
+}
+
+export default MenuAccordion;
+

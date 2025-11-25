@@ -1,0 +1,74 @@
+{
+  "coffee": [
+    {
+      "id": "coffee-amelie-latte",
+      "name": "Amelie Signature Latte",
+      "price": 12,
+      "description": "House espresso, caramelized sugar syrup, steamed milk, vanilla foam.",
+      "image": "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "coffee-cardamom-cold-brew",
+      "name": "Cardamom Cold Brew",
+      "price": 14,
+      "description": "18-hour brew with cardamom, citrus finish, served over ice.",
+      "image": "https://images.unsplash.com/photo-1464306076886-da185f6a9d12?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "coffee-flat-white",
+      "name": "Classic Flat White",
+      "price": 11,
+      "description": "Double ristretto with silky steamed milk and micro-foam art.",
+      "image": "https://images.unsplash.com/photo-1432107294467-6ad2b0f5b42b?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "cake": [
+    {
+      "id": "cake-blackberry-lavender",
+      "name": "Blackberry Lavender Cake",
+      "price": 85,
+      "description": "Three-layer sponge with mascarpone cream, lavender syrup, and fresh berries.",
+      "image": "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "cake-salted-honey",
+      "name": "Salted Honey Basque Cheesecake",
+      "price": 95,
+      "description": "Burnt cheesecake with sea salt caramel and roasted pistachios.",
+      "image": "https://images.unsplash.com/photo-1505253216365-81b95e0636f5?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "wedding-cakes": [
+    {
+      "id": "wedding-peony-lace",
+      "name": "Peony Lace Tier",
+      "price": 420,
+      "description": "Two-tier vanilla bean cake with raspberry cream and sugar-peony florals.",
+      "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "wedding-citrus-velvet",
+      "name": "Citrus Velvet Tier",
+      "price": 560,
+      "description": "Three-tier blood orange velvet cake, white chocolate mousse, pressed floral finish.",
+      "image": "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "tama-products": [
+    {
+      "id": "tama-honey-caramel",
+      "name": "Tama Honey Caramel Jar",
+      "price": 35,
+      "description": "Hazelnut honey spread with caramel ribbons — perfect for gifting.",
+      "image": "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "tama-pistachio-crunch",
+      "name": "Tama Pistachio Crunch",
+      "price": 38,
+      "description": "Nougat-inspired bar with pistachio, rose petals, and white chocolate drizzle.",
+      "image": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=600&q=80"
+    }
+  ]
+}
+

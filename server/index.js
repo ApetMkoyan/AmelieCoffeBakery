@@ -1,0 +1,404 @@
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { nanoid } from "nanoid";
+import { readJson, writeJson } from "./utils/storage.js";
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distDir = path.resolve(__dirname, "../client/dist");
+const clientFallback = path.resolve(__dirname, "../client");
+const clientDir = fs.existsSync(distDir) ? distDir : clientFallback;
+
+app.use(helmet());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+app.use(express.json());
+app.use(morgan("dev"));
+
+const PRODUCTS_FILE = "products.json";
+const ORDERS_FILE = "orders.json";
+const CONSUMABLES_FILE = "consumables.json";
+const SUPERVISOR_PASSCODE =
+  process.env.SUPERVISOR_PASSCODE || "Amelie123";
+const activeSessions = new Map();
+
+const ensureDefaults = async () => {
+  await readJson(PRODUCTS_FILE, {});
+  await readJson(ORDERS_FILE, []);
+  await readJson(CONSUMABLES_FILE, []);
+};
+
+const authenticateSupervisor = (req, res, next) => {
+  const token = req.header("x-supervisor-token");
+  if (!token || !activeSessions.has(token)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  req.supervisor = activeSessions.get(token);
+  next();
+};
+
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", uptime: process.uptime() });
+});
+
+app.get("/api/products", async (_req, res, next) => {
+  try {
+    const products = await readJson(PRODUCTS_FILE, {});
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/api/orders", async (_req, res, next) => {
+  try {
+    const orders = await readJson(ORDERS_FILE, []);
+    res.json(orders);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/orders", async (req, res, next) => {
+  try {
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "phone",
+      "address",
+      "delivery",
+      "eventDate",
+      "details",
+      "paymentMethod",
+    ];
+    const missing = requiredFields.filter((field) => !req.body[field]);
+    if (missing.length) {
+      return res
+        .status(400)
+        .json({ error: `Missing required fields: ${missing.join(", ")}` });
+    }
+
+    const newOrder = {
+      id: nanoid(),
+      ...req.body,
+      items: Array.isArray(req.body.items) ? req.body.items : [],
+      eventDate: req.body.eventDate
+        ? new Date(req.body.eventDate).toISOString()
+        : null,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+
+    const orders = await readJson(ORDERS_FILE, []);
+    orders.push(newOrder);
+    await writeJson(ORDERS_FILE, orders);
+
+    res.status(201).json({ message: "Order received", order: newOrder });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/supervisor/login", (req, res) => {
+  const { email, passcode } = req.body || {};
+  if (!email || !passcode) {
+    return res.status(400).json({ error: "Email and passcode are required" });
+  }
+  if (passcode !== SUPERVISOR_PASSCODE) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+  const token = nanoid();
+  activeSessions.set(token, { email, signedInAt: new Date().toISOString() });
+  res.json({ token, profile: { email } });
+});
+
+app.post("/api/products", authenticateSupervisor, async (req, res, next) => {
+  try {
+    const { category, name, price, description, image } = req.body || {};
+    if (!category || !name || !price || !description) {
+      return res
+        .status(400)
+        .json({ error: "Category, name, price, and description are required" });
+    }
+
+    const products = await readJson(PRODUCTS_FILE, {});
+    if (!products[category]) {
+      products[category] = [];
+    }
+
+    const newProduct = {
+      id: nanoid(),
+      name,
+      price: Number(price),
+      description,
+      image: image || "",
+    };
+
+    products[category].push(newProduct);
+    await writeJson(PRODUCTS_FILE, products);
+
+    res
+      .status(201)
+      .json({ message: "Product added", product: newProduct, category });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch(
+  "/api/products/:productId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+      const { category, name, price, description, image } = req.body || {};
+      const products = await readJson(PRODUCTS_FILE, {});
+      
+      let found = false;
+      for (const cat in products) {
+        const index = products[cat].findIndex((p) => p.id === productId);
+        if (index !== -1) {
+          if (name) products[cat][index].name = name;
+          if (price !== undefined) products[cat][index].price = Number(price);
+          if (description) products[cat][index].description = description;
+          if (image !== undefined) products[cat][index].image = image;
+          if (category && category !== cat) {
+            const product = products[cat][index];
+            products[cat].splice(index, 1);
+            if (!products[category]) products[category] = [];
+            products[category].push(product);
+          }
+          products[cat][index].updatedAt = new Date().toISOString();
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      
+      await writeJson(PRODUCTS_FILE, products);
+      res.json({ message: "Product updated" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.delete(
+  "/api/products/:productId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+      const products = await readJson(PRODUCTS_FILE, {});
+      let found = false;
+      
+      for (const cat in products) {
+        const filtered = products[cat].filter((p) => p.id !== productId);
+        if (filtered.length !== products[cat].length) {
+          products[cat] = filtered;
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      
+      await writeJson(PRODUCTS_FILE, products);
+      res.json({ message: "Product deleted" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.get("/api/consumables", authenticateSupervisor, async (_req, res, next) => {
+  try {
+    const consumables = await readJson(CONSUMABLES_FILE, []);
+    res.json(consumables);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post(
+  "/api/consumables",
+  authenticateSupervisor,
+  async (req, res, next) => {
+  try {
+      const requiredFields = ["date", "item"];
+      const missing = requiredFields.filter((field) => !req.body[field]);
+    if (missing.length) {
+      return res
+        .status(400)
+        .json({ error: `Missing required fields: ${missing.join(", ")}` });
+    }
+
+    const entry = {
+      id: nanoid(),
+      ...req.body,
+        expense: Number(req.body.expense || 0),
+        profit: Number(req.body.profit || 0),
+      createdAt: new Date().toISOString(),
+    };
+
+    const consumables = await readJson(CONSUMABLES_FILE, []);
+    consumables.push(entry);
+    await writeJson(CONSUMABLES_FILE, consumables);
+
+    res.status(201).json({ message: "Consumable entry added", entry });
+  } catch (error) {
+    next(error);
+  }
+  }
+);
+
+app.get("/api/orders", authenticateSupervisor, async (_req, res, next) => {
+  try {
+    const orders = await readJson(ORDERS_FILE, []);
+    orders.sort(
+      (a, b) =>
+        new Date(a.eventDate || a.createdAt) -
+        new Date(b.eventDate || b.createdAt)
+    );
+    res.json(orders);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch(
+  "/api/orders/:orderId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { orderId } = req.params;
+      const { status, eventDate } = req.body || {};
+      if (!status && !eventDate) {
+        return res
+          .status(400)
+          .json({ error: "Status or event date is required to update" });
+      }
+
+      const orders = await readJson(ORDERS_FILE, []);
+      const index = orders.findIndex((order) => order.id === orderId);
+      if (index === -1) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      if (status) {
+        orders[index].status = status;
+      }
+      if (eventDate) {
+        orders[index].eventDate = new Date(eventDate).toISOString();
+      }
+      orders[index].updatedAt = new Date().toISOString();
+
+      await writeJson(ORDERS_FILE, orders);
+      res.json({ message: "Order updated", order: orders[index] });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.delete(
+  "/api/orders/:orderId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { orderId } = req.params;
+      const orders = await readJson(ORDERS_FILE, []);
+      const filtered = orders.filter((order) => order.id !== orderId);
+      if (filtered.length === orders.length) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      await writeJson(ORDERS_FILE, filtered);
+      res.json({ message: "Order deleted" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.patch(
+  "/api/consumables/:entryId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { entryId } = req.params;
+      const { item, expense, profit } = req.body || {};
+      const consumables = await readJson(CONSUMABLES_FILE, []);
+      const index = consumables.findIndex((entry) => entry.id === entryId);
+      if (index === -1) {
+        return res.status(404).json({ error: "Entry not found" });
+      }
+      if (item) consumables[index].item = item;
+      if (expense !== undefined)
+        consumables[index].expense = Number(expense);
+      if (profit !== undefined) consumables[index].profit = Number(profit);
+      consumables[index].updatedAt = new Date().toISOString();
+      await writeJson(CONSUMABLES_FILE, consumables);
+      res.json({ message: "Entry updated", entry: consumables[index] });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.delete(
+  "/api/consumables/:entryId",
+  authenticateSupervisor,
+  async (req, res, next) => {
+    try {
+      const { entryId } = req.params;
+      const consumables = await readJson(CONSUMABLES_FILE, []);
+      const filtered = consumables.filter((entry) => entry.id !== entryId);
+      if (filtered.length === consumables.length) {
+        return res.status(404).json({ error: "Entry not found" });
+      }
+      await writeJson(CONSUMABLES_FILE, filtered);
+      res.json({ message: "Entry deleted" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.use(express.static(clientDir));
+
+app.get("*", (_req, res, next) => {
+  if (_req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  res.status(500).json({ error: "Internal server error" });
+});
+
+ensureDefaults()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Amelie server listening on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to bootstrap server", error);
+    process.exit(1);
+  });
+
