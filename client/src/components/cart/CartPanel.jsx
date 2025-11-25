@@ -6,7 +6,7 @@ const currency = (value) =>
     currency: "GEL",
   }).format(Number(value || 0));
 
-function CartPanel({ items, onIncrement, onDecrement, onRemove }) {
+function CartPanel({ items, onIncrement, onDecrement, onRemove, onOrderClick }) {
   const { t } = useLanguage();
   const total = items.reduce(
     (sum, item) => sum + item.quantity * Number(item.price),
@@ -65,8 +65,19 @@ function CartPanel({ items, onIncrement, onDecrement, onRemove }) {
       )}
 
       <footer className="cart-summary">
-        <p>{t("cart.total")}</p>
-        <strong>{currency(total)}</strong>
+        <div className="cart-total-row">
+          <p>{t("cart.total")}</p>
+          <strong>{currency(total)}</strong>
+        </div>
+        {items.length > 0 && onOrderClick && (
+          <button
+            type="button"
+            className="btn primary full-width cart-order-button"
+            onClick={onOrderClick}
+          >
+            {t("cart.orderNow")}
+          </button>
+        )}
       </footer>
     </section>
   );

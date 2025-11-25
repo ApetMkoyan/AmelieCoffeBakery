@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { scrollToElementById } from "../utils/scroll.js";
 
 const menuSections = [
   { id: "coffee", labelKey: "menu.coffee" },
@@ -50,6 +51,13 @@ function ProductMenuBar() {
   }, [activeSection]);
 
   const handleClick = (sectionId) => {
+    // Special handling for custom-order: scroll directly to order form
+    if (sectionId === "custom-order") {
+      setActiveSection(sectionId);
+      scrollToElementById("custom-order", 140);
+      return;
+    }
+    
     // Toggle active state: if clicking the same section, deactivate it
     if (activeSection === sectionId) {
       setActiveSection(null);
@@ -76,39 +84,18 @@ function ProductMenuBar() {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setTimeout(() => {
-              scrollToElement(detailsElement);
+              scrollToElementById(sectionId, 140);
             }, 200);
           });
         });
       } else {
         // If already open, scroll smoothly immediately
-        scrollToElement(detailsElement);
+        scrollToElementById(sectionId, 140);
       }
     } else {
       // Fallback: try to find any element with this ID
-      const element = document.getElementById(sectionId);
-      if (element) {
-        scrollToElement(element);
-      }
+      scrollToElementById(sectionId, 140);
     }
-  };
-
-  const scrollToElement = (element) => {
-    // Calculate proper offset accounting for fixed headers
-    const headerHeight = 60; // TopNav height
-    const menuBarHeight = 60; // ProductMenuBar height
-    const totalOffset = headerHeight + menuBarHeight + 20; // Extra padding for visual spacing
-    
-    // Get the element's position relative to the document
-    const elementRect = element.getBoundingClientRect();
-    const absoluteElementTop = elementRect.top + window.pageYOffset;
-    const scrollTarget = absoluteElementTop - totalOffset;
-    
-    // Use smooth scrolling - browser handles easing automatically
-    window.scrollTo({
-      top: Math.max(0, scrollTarget),
-      behavior: "smooth",
-    });
   };
 
   return (

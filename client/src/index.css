@@ -764,11 +764,36 @@ textarea {
 }
 
 .cart-summary {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-total-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-weight: 600;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
+}
+
+.cart-order-button {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.cart-order-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(199, 107, 92, 0.3);
+}
+
+.cart-order-button:active {
+  transform: translateY(0);
 }
 
 .table-actions {
@@ -1355,6 +1380,185 @@ tfoot td {
 
   .menu-accordion summary {
     touch-action: manipulation;
+  }
+}
+
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 280px;
+  max-width: 90%;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.toast-message {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+/* Cart Icon */
+.cart-icon-button {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(199, 107, 92, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.cart-icon-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 28px rgba(199, 107, 92, 0.5);
+}
+
+.cart-icon-button:active {
+  transform: scale(0.95);
+}
+
+.cart-icon-button.animate {
+  animation: cartBounce 0.6s ease;
+}
+
+@keyframes cartBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+}
+
+.cart-icon-svg {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 2px solid white;
+  animation: badgePulse 0.3s ease;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .cart-icon-button {
+    width: 56px;
+    height: 56px;
+    bottom: 1.5rem;
+    left: 1.5rem;
+  }
+
+  .cart-icon-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .cart-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+
+  .toast-notification {
+    bottom: 5rem;
+    left: 1rem;
+    right: 1rem;
+    transform: translateX(0) translateY(100px);
+    max-width: calc(100% - 2rem);
+    min-width: auto;
+  }
+
+  .toast-notification.show {
+    transform: translateX(0) translateY(0);
   }
 }
 

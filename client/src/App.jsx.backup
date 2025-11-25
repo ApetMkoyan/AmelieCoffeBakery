@@ -1,0 +1,679 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLanguage } from "./contexts/LanguageContext.jsx";
+import TopNav from "./components/TopNav.jsx";
+import Hero from "./components/Hero.jsx";
+import SectionHeading from "./components/SectionHeading.jsx";
+import CartPanel from "./components/cart/CartPanel.jsx";
+import CheckoutForm from "./components/OrderSection.jsx";
+import MenuAccordion from "./components/menu/MenuAccordion.jsx";
+import ProductMenuBar from "./components/ProductMenuBar.jsx";
+import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
+import SupervisorSection from "./components/supervisor/SupervisorSection.jsx";
+import Footer from "./components/Footer.jsx";
+import ToastNotification from "./components/ToastNotification.jsx";
+import CartIcon from "./components/CartIcon.jsx";
+
+const API_BASE = "/api";
+const BUSINESS_NAME = "Amelie Coffee & Bakery";
+
+// Category descriptions are now in translations.js
+
+const loadSupervisorToken = () =>
+  localStorage.getItem("amelieSupervisorToken") || "";
+const loadSupervisorEmail = () =>
+  localStorage.getItem("amelieSupervisorEmail") || "";
+
+function App() {
+  const { t, language } = useLanguage();
+  const [view, setView] = useState("guest");
+  const [products, setProducts] = useState({});
+  const [productsState, setProductsState] = useState({
+    loading: true,
+    error: "",
+  });
+
+  const [orderStatus, setOrderStatus] = useState({
+    type: "idle",
+    message: "",
+  });
+
+  const [supervisorToken, setSupervisorToken] = useState(loadSupervisorToken);
+  const [supervisorProfile, setSupervisorProfile] = useState(() => {
+    const email = loadSupervisorEmail();
+    return email ? { email } : null;
+  });
+  const [consumables, setConsumables] = useState([]);
+  const [consumableState, setConsumableState] = useState({
+    loading: false,
+    error: "",
+  });
+  const [orders, setOrders] = useState([]);
+  const [ordersState, setOrdersState] = useState({
+    loading: false,
+    error: "",
+  });
+  const [cartItems, setCartItems] = useState([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [cartAnimate, setCartAnimate] = useState(false);
+
+  const handleSupervisorLogout = useCallback(() => {
+    localStorage.removeItem("amelieSupervisorToken");
+    localStorage.removeItem("amelieSupervisorEmail");
+    setSupervisorToken("");
+    setConsumables([]);
+    setOrders([]);
+    setSupervisorProfile(null);
+  }, []);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      setProductsState({ loading: true, error: "" });
+      const res = await fetch(`${API_BASE}/products`);
+      if (!res.ok) throw new Error("Unable to load menu");
+      const data = await res.json();
+      setProducts(data);
+      setProductsState({ loading: false, error: "" });
+    } catch (error) {
+      console.error(error);
+      setProductsState({ loading: false, error: error.message });
+    }
+  }, []);
+
+  const fetchConsumables = useCallback(async () => {
+    if (!supervisorToken) return;
+    try {
+      setConsumableState({ loading: true, error: "" });
+      const res = await fetch(`${API_BASE}/consumables`, {
+        headers: {
+          "x-supervisor-token": supervisorToken,
+        },
+      });
+      if (res.status === 401) {
+        throw new Error("Session expired. Please log in again.");
+      }
+      if (!res.ok) throw new Error("Unable to load supervisor data");
+      const data = await res.json();
+      setConsumables(data);
+      setConsumableState({ loading: false, error: "" });
+    } catch (error) {
+      console.error(error);
+      setConsumableState({ loading: false, error: error.message });
+      if (error.message.includes("expired")) {
+        handleSupervisorLogout();
+      }
+    }
+  }, [handleSupervisorLogout, supervisorToken]);
+
+  const fetchOrders = useCallback(async () => {
+    if (!supervisorToken) return;
+    try {
+      setOrdersState({ loading: true, error: "" });
+      const res = await fetch(`${API_BASE}/orders`, {
+        headers: {
+          "x-supervisor-token": supervisorToken,
+        },
+      });
+      if (res.status === 401) {
+        throw new Error("Session expired. Please log in again.");
+      }
+      if (!res.ok) throw new Error("Unable to load orders");
+      const data = await res.json();
+      setOrders(data);
+      setOrdersState({ loading: false, error: "" });
+    } catch (error) {
+      console.error(error);
+      setOrdersState({ loading: false, error: error.message });
+      if (error.message.includes("expired")) {
+        handleSupervisorLogout();
+      }
+    }
+  }, [handleSupervisorLogout, supervisorToken]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    fetchConsumables();
+  }, [fetchConsumables]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const handleOrderSubmit = async (payload) => {
+    try {
+      setOrderStatus({ type: "loading", message: "Sending order..." });
+      const res = await fetch(`${API_BASE}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Could not submit order");
+      setOrderStatus({
+        type: "success",
+        message: "Thanks! We'll call you shortly to confirm.",
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      setOrderStatus({
+        type: "error",
+        message: "Something went wrong. Please try again.",
+      });
+      return false;
+    }
+  };
+
+  const handleCheckoutSubmit = async (formValues) => {
+    try {
+      const items = cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      const summary = items.length
+        ? items.map((item) => `${item.quantity}x ${item.name}`).join(", ")
+        : "Custom order request";
+      const details =
+        summary + (formValues.notes ? ` · Notes: ${formValues.notes}` : "");
+
+      const payload = {
+        ...formValues,
+        items,
+        details,
+      };
+
+      const success = await handleOrderSubmit(payload);
+      if (success) {
+        setCartItems([]);
+      }
+      return success;
+    } catch (error) {
+      console.error("Checkout submission error:", error);
+      return false;
+    }
+  };
+
+  const handleConsumableSubmit = async (payload) => {
+    if (!supervisorToken) return false;
+    try {
+      const res = await fetch(`${API_BASE}/consumables`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-supervisor-token": supervisorToken,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Unable to save entry");
+      await fetchConsumables();
+      return true;
+    } catch (error) {
+      console.error(error);
+      setConsumableState((prev) => ({
+        ...prev,
+        error: "Unable to save entry. Please retry.",
+      }));
+      return false;
+    }
+  };
+
+  const handleSupervisorLogin = async (credentials) => {
+    try {
+      const res = await fetch(`${API_BASE}/supervisor/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({}));
+        throw new Error(error?.error || "Invalid credentials");
+      }
+      const data = await res.json();
+      localStorage.setItem("amelieSupervisorToken", data.token);
+      setSupervisorToken(data.token);
+      if (data.profile?.email) {
+        localStorage.setItem("amelieSupervisorEmail", data.profile.email);
+        setSupervisorProfile(data.profile);
+      }
+      setConsumableState({ loading: false, error: "" });
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  const handleProductCreate = async (payload) => {
+    if (!supervisorToken) return { success: false, message: "Unauthorized" };
+    try {
+      const res = await fetch(`${API_BASE}/products`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-supervisor-token": supervisorToken,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || "Unable to add product");
+      }
+      await fetchProducts();
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  const handleProductEdit = async (productId, payload) => {
+    if (!supervisorToken) return { success: false, message: "Unauthorized" };
+    try {
+      const res = await fetch(`${API_BASE}/products/${productId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-supervisor-token": supervisorToken,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || "Unable to update product");
+      }
+      await fetchProducts();
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  const handleProductDelete = async (productId) => {
+    if (!supervisorToken) return { success: false, message: "Unauthorized" };
+    try {
+      const res = await fetch(`${API_BASE}/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "x-supervisor-token": supervisorToken,
+        },
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || "Unable to delete product");
+      }
+      await fetchProducts();
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  const handleOrderStatusUpdate = async (orderId, status) => {
+    if (!supervisorToken) return false;
+    try {
+      const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-supervisor-token": supervisorToken,
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error("Unable to update order");
+      await fetchOrders();
+      return true;
+    } catch (error) {
+      console.error(error);
+      setOrdersState((prev) => ({
+        ...prev,
+        error: "Unable to update order. Please retry.",
+      }));
+      return false;
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!supervisorToken) return false;
+    try {
+      const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+        method: "DELETE",
+        headers: {
+          "x-supervisor-token": supervisorToken,
+        },
+      });
+      if (!res.ok) throw new Error("Unable to delete order");
+      await fetchOrders();
+      return true;
+    } catch (error) {
+      console.error(error);
+      setOrdersState((prev) => ({
+        ...prev,
+        error: "Unable to delete order. Please retry.",
+      }));
+      return false;
+    }
+  };
+
+  const handleEditConsumable = async (entryId, updates) => {
+    if (!supervisorToken) return false;
+    try {
+      const res = await fetch(`${API_BASE}/consumables/${entryId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-supervisor-token": supervisorToken,
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) throw new Error("Unable to update entry");
+      await fetchConsumables();
+      return true;
+    } catch (error) {
+      console.error(error);
+      setConsumableState((prev) => ({
+        ...prev,
+        error: "Unable to update entry. Please retry.",
+      }));
+      return false;
+    }
+  };
+
+  const handleDeleteConsumable = async (entryId) => {
+    if (!supervisorToken) return false;
+    try {
+      const res = await fetch(`${API_BASE}/consumables/${entryId}`, {
+        method: "DELETE",
+        headers: {
+          "x-supervisor-token": supervisorToken,
+        },
+      });
+      if (!res.ok) throw new Error("Unable to delete entry");
+      await fetchConsumables();
+      return true;
+    } catch (error) {
+      console.error(error);
+      setConsumableState((prev) => ({
+        ...prev,
+        error: "Unable to delete entry. Please retry.",
+      }));
+      return false;
+    }
+  };
+
+  const addToCart = (product) => {
+    setCartItems((prev) => {
+      const productId = product.id || product.name;
+      const existing = prev.find((item) => item.id === productId);
+      if (existing) {
+        const updated = prev.map((item) =>
+          item.id === productId
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+        setToastMessage(t("cart.addedToCart", { name: product.name }));
+        setCartAnimate(true);
+        return updated;
+      }
+      const newItems = [
+        ...prev,
+        {
+          id: productId,
+          name: product.name,
+          price: Number(product.price),
+          image: product.image || "",
+          quantity: 1,
+        },
+      ];
+      setToastMessage(t("cart.addedToCart", { name: product.name }));
+      setCartAnimate(true);
+      return newItems;
+    });
+  };
+
+  const handleCartIconClick = () => {
+    const cartSection = document.getElementById("cart");
+    if (cartSection) {
+      const headerHeight = 60;
+      const menuBarHeight = 60;
+      const totalOffset = headerHeight + menuBarHeight + 20;
+      const elementRect = cartSection.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.pageYOffset;
+      const scrollTarget = absoluteElementTop - totalOffset;
+      window.scrollTo({
+        top: Math.max(0, scrollTarget),
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const scrollToOrderForm = () => {
+    const orderSection = document.getElementById("custom-order");
+    if (orderSection) {
+      const headerHeight = 60;
+      const menuBarHeight = 60;
+      const totalOffset = headerHeight + menuBarHeight + 20;
+      const elementRect = orderSection.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.pageYOffset;
+      const scrollTarget = absoluteElementTop - totalOffset;
+      
+      // Smooth scroll with custom easing
+      const startPosition = window.pageYOffset;
+      const distance = scrollTarget - startPosition;
+      const duration = 800;
+      let start = null;
+
+      function smoothScroll(currentTime) {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        const ease = progress < 0.5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
+        window.scrollTo(0, startPosition + distance * ease);
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(smoothScroll);
+        }
+      }
+      
+      requestAnimationFrame(smoothScroll);
+    }
+  };
+
+  const updateCartQuantity = (productId, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item.id === productId
+            ? { ...item, quantity: item.quantity + delta }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeFromCart = (productId) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== productId));
+  };
+
+  const catalogContent = useMemo(
+    () => ({
+      products,
+      descriptions: {
+        coffee: t("categories.coffee"),
+        cake: t("categories.cake"),
+        "wedding-cakes": t("categories.wedding-cakes"),
+        "tama-products": t("categories.tama-products"),
+      },
+      isLoading: productsState.loading,
+      error: productsState.error,
+    }),
+    [products, productsState, language, t]
+  );
+
+  const handleNavigate = useCallback(
+    (targetId, href) => {
+      if (targetId === "supervisor") {
+        setView("supervisor");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return true;
+      }
+
+      if (targetId === "home" || targetId === "menu" || targetId === "custom-order") {
+        if (view !== "guest") {
+          setView("guest");
+        }
+        const selectorMap = {
+          home: "#top",
+          menu: "#menu",
+          "custom-order": "#custom-order",
+        };
+        const selector = selectorMap[targetId] || href;
+        setTimeout(() => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, view === "guest" ? 0 : 60);
+        return true;
+      }
+      return false;
+    },
+    [view]
+  );
+
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  return (
+    <>
+      <TopNav currentView={view} onNavigate={handleNavigate} />
+      <LanguageSwitcher />
+      {view === "guest" && (
+      <CartIcon
+        itemCount={cartItemCount}
+        onClick={handleCartIconClick}
+        animate={cartAnimate}
+        onAnimationEnd={() => setCartAnimate(false)}
+      />
+      )}
+      <ToastNotification
+        message={toastMessage}
+        onClose={() => setToastMessage("")}
+      />
+      {view === "guest" ? (
+        <>
+          <Hero />
+          <ProductMenuBar />
+          <main>
+            <section id="menu" className="section">
+              <SectionHeading
+                title={t("menu.title")}
+                subtitle={t("menu.subtitle")}
+              />
+              {catalogContent.isLoading ? (
+                <p>{t("menu.loadingMenu")}</p>
+              ) : catalogContent.error ? (
+                <p>{catalogContent.error}</p>
+              ) : (
+                <MenuAccordion
+                  products={catalogContent.products}
+                  descriptions={catalogContent.descriptions}
+                  onAddToCart={addToCart}
+                  renderCustomSection={() => (
+                    <div className="custom-order-preview">
+                      <p>{t("menu.customOrderPreview")}</p>
+                      <div className="preview-actions">
+                        <a className="btn primary" href="#cart" onClick={(e) => handleNavigate("cart", "#cart", e)}>
+                          {t("menu.viewCart")}
+                        </a>
+                        <a className="btn ghost" href="#custom-order" onClick={(e) => handleNavigate("custom-order", "#custom-order", e)}>
+                          {t("menu.customOrderForm")}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                />
+              )}
+            </section>
+
+            <section id="cart" className="section cart-section">
+              <SectionHeading
+                title={t("cart.title")}
+                subtitle={t("cart.subtitle")}
+              />
+              <CartPanel
+                items={cartItems}
+                onIncrement={(id) => updateCartQuantity(id, 1)}
+                onDecrement={(id) => updateCartQuantity(id, -1)}
+                onRemove={removeFromCart}
+                onOrderClick={scrollToOrderForm}
+              />
+            </section>
+
+            <section id="custom-order" className="section order-section">
+              <SectionHeading
+                title={t("order.title")}
+                subtitle={t("order.subtitle")}
+              />
+              <CheckoutForm
+                cartItems={cartItems}
+                status={orderStatus}
+                onSubmit={handleCheckoutSubmit}
+                showCustomFields
+              />
+            </section>
+          </main>
+        </>
+      ) : (
+        <main className="supervisor-page">
+          <section className="section supervisor-section">
+            <SectionHeading
+              title={t("supervisor.title")}
+              subtitle={
+                supervisorToken
+                  ? t("supervisor.subtitle")
+                  : t("supervisor.loginSubtitle")
+              }
+            />
+            <SupervisorSection
+              isAuthenticated={Boolean(supervisorToken)}
+              businessName={BUSINESS_NAME}
+              profile={supervisorProfile}
+              products={products}
+              consumables={consumables}
+              consumableState={consumableState}
+              orders={orders}
+              ordersState={ordersState}
+              onAddEntry={handleConsumableSubmit}
+              onEditEntry={handleEditConsumable}
+              onDeleteEntry={handleDeleteConsumable}
+              onAddProduct={handleProductCreate}
+              onEditProduct={handleProductEdit}
+              onDeleteProduct={handleProductDelete}
+              onUpdateOrderStatus={handleOrderStatusUpdate}
+              onDeleteOrder={handleDeleteOrder}
+              onLogin={handleSupervisorLogin}
+              onLogout={handleSupervisorLogout}
+            />
+          </section>
+        </main>
+      )}
+
+      <Footer />
+    </>
+  );
+}
+
+export default App;
+

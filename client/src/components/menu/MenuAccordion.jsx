@@ -1,5 +1,6 @@
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
 import ProductCategoryCard from "../products/ProductCategoryCard.jsx";
+import { scrollToElementById } from "../../utils/scroll.js";
 
 const sections = [
   { id: "coffee", labelKey: "menu.coffeeCollection" },
@@ -15,6 +16,14 @@ function MenuAccordion({
   renderCustomSection,
 }) {
   const { t } = useLanguage();
+
+  const handleSummaryClick = (sectionId, e) => {
+    if (sectionId === "custom-order") {
+      e.preventDefault();
+      scrollToElementById("custom-order", 140);
+    }
+  };
+
   return (
     <div className="menu-accordion">
       {sections.map((section, index) => {
@@ -36,7 +45,9 @@ function MenuAccordion({
             id={section.id}
             open={index === 0}
           >
-            <summary>{t(section.labelKey)}</summary>
+            <summary onClick={(e) => handleSummaryClick(section.id, e)}>
+              {t(section.labelKey)}
+            </summary>
             <div className="accordion-panel">
               {isCustom ? (
                 renderCustomSection()

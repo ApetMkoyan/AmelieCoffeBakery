@@ -2,7 +2,7 @@ export const translations = {
   en: {
     nav: { home: "Home", menu: "Menu", customOrder: "Custom Order", supervisor: "Supervisor", backToMenu: "← Back to Menu" },
     hero: { 
-      eyebrow: "Amelie Café & Confectionery",
+      eyebrow: "Amelie Coffee & Bakery",
       title: "Amelie Coffee & Bakery",
       subtitle: "Small-batch coffee, cakes, wedding delights, and Tama treats.",
       lead: "Explore our curated collections, place your order online, and we'll call to confirm the finishing touches.",
@@ -18,7 +18,7 @@ export const translations = {
       custom: "Custom Order",
       tama: "Tama Products",
       coffeeCollection: "Coffee Collection",
-      cakeTama: "Cake & Tama Sweets",
+      cakeTama: "Cake & Sweets",
       weddingCakes: "Wedding Cakes",
       createOrder: "Create Your Own Order",
       descriptionFallback: "Signature creations prepared by the Amelie team each morning.",
@@ -38,7 +38,9 @@ export const translations = {
       reviewItems: "Review picks, adjust quantities, or remove items before sending the request.",
       addItemsFirst: "Add items to your cart first",
       items: "item(s)",
-      addFavorites: "Add your favorites to begin an order."
+      addFavorites: "Add your favorites to begin an order.",
+      addedToCart: "{name} added to cart",
+      orderNow: "Order Now"
     },
     order: { 
       title: "Custom Order Details", 
@@ -68,7 +70,10 @@ export const translations = {
       checkout: "Checkout",
       customOrderDetails: "Custom Order Details",
       customOrderSubtitle: "Tell us about the cake size, budget, and any inspiration. We'll confirm everything by phone before payment.",
-      sendingOrder: "Sending order..."
+      sendingOrder: "Sending order...",
+      successMessage: "Thanks! We'll call you shortly to confirm.",
+      errorMessage: "Something went wrong. Please try again.",
+      customOrderRequest: "Custom order request"
     },
     products: { 
       addToCart: "Add to cart", 
@@ -87,7 +92,7 @@ export const translations = {
       signingIn: "Signing in..."
     },
     footer: {
-      copyright: "© {year} Amelie Café & Confectionery · Tbilisi, Georgia"
+      copyright: "© {year} Amelie Coffee & Bakery · Tbilisi, Georgia"
     },
     categories: {
       coffee: "Single-origin espresso drinks and slow brews roasted in-house.",
@@ -102,6 +107,13 @@ export const translations = {
       login: { title: "Supervisor Access", subtitle: "Enter your Amelie supervisor credentials to continue.", email: "Email or Login", passcode: "Passcode", signIn: "Signing in...", logIn: "Log In", welcome: "Welcome back!", failed: "Login failed." },
       info: { loggedIn: "Logged in as", logout: "Log out" },
       panels: { productStudio: "Product Studio", expensesProfit: "Expenses & Profit", ordersCalendar: "Orders Calendar" },
+      errors: {
+        saveEntry: "Unable to save entry. Please retry.",
+        updateEntry: "Unable to update entry. Please retry.",
+        deleteEntry: "Unable to delete entry. Please retry.",
+        updateOrder: "Unable to update order. Please retry.",
+        deleteOrder: "Unable to delete order. Please retry."
+      },
       products: {
         addNew: "Add a new product",
         category: "Category",
@@ -186,7 +198,7 @@ export const translations = {
   ka: {
     nav: { home: "მთავარი", menu: "მენიუ", customOrder: "შეკვეთა", supervisor: "სუპერვაიზერი", backToMenu: "← მენიუში დაბრუნება" },
     hero: { 
-      eyebrow: "ამელი კაფე და კონდიტერია",
+      eyebrow: "Amelie Coffee & Bakery",
       title: "Amelie Coffee & Bakery",
       subtitle: "მცირე პარტიის ყავა, ტორტები, ქორწილის სიამოვნებები და ტამას ტკბილეული.",
       lead: "გაიარეთ ჩვენი შერჩეული კოლექციები, განათავსეთ შეკვეთა ონლაინ და ჩვენ დავურეკავთ დასადასტურებლად.",
@@ -202,7 +214,7 @@ export const translations = {
       custom: "შეკვეთა",
       tama: "ტამას პროდუქტები",
       coffeeCollection: "ყავის კოლექცია",
-      cakeTama: "ტორტი და ტამას ტკბილეული",
+      cakeTama: "ტორტი და ტკბილეული",
       weddingCakes: "ქორწილის ტორტები",
       createOrder: "შექმენით საკუთარი შეკვეთა",
       descriptionFallback: "ხელმოწერის შექმნა, რომელიც მომზადებულია ამელის გუნდის მიერ ყოველ დილას.",
@@ -222,7 +234,9 @@ export const translations = {
       reviewItems: "გადახედეთ არჩეულებს, შეცვალეთ რაოდენობა ან წაშალეთ პროდუქტები გაგზავნამდე.",
       addItemsFirst: "ჯერ დაამატეთ პროდუქტები კალათაში",
       items: "ნივთი(ები)",
-      addFavorites: "დაამატეთ თქვენი რჩეულები შეკვეთის დასაწყებად."
+      addFavorites: "დაამატეთ თქვენი რჩეულები შეკვეთის დასაწყებად.",
+      addedToCart: "{name} დაემატა კალათაში",
+      orderNow: "შეკვეთა"
     },
     order: { 
       title: "შეკვეთის დეტალები", 
@@ -252,7 +266,10 @@ export const translations = {
       checkout: "გადახდა",
       customOrderDetails: "შეკვეთის დეტალები",
       customOrderSubtitle: "გვითხარით ტორტის ზომის, ბიუჯეტისა და ინსპირაციის შესახებ. ყველაფერს ტელეფონით დავადასტურებთ გადახდამდე.",
-      sendingOrder: "შეკვეთის გაგზავნა..."
+      sendingOrder: "შეკვეთის გაგზავნა...",
+      successMessage: "გმადლობთ! მალე დაგირეკავთ დასადასტურებლად.",
+      errorMessage: "რაღაც შეცდომა მოხდა. გთხოვთ, სცადოთ თავიდან.",
+      customOrderRequest: "შეკვეთის მოთხოვნა"
     },
     products: { addToCart: "კალათაში დამატება", info: "ინფორმაცია", hideInfo: "ინფორმაციის დამალვა" },
     common: {
@@ -267,7 +284,7 @@ export const translations = {
       signingIn: "შესვლა..."
     },
     footer: {
-      copyright: "© {year} ამელი კაფე და კონდიტერია · თბილისი, საქართველო"
+      copyright: "© {year} Amelie Coffee & Bakery · თბილისი, საქართველო"
     },
     categories: {
       coffee: "ერთჯერადი ესპრესო სასმელები და ნელი ხარშვა, რომლებიც მომზადებულია სახლში.",
@@ -282,6 +299,13 @@ export const translations = {
       login: { title: "სუპერვაიზერის წვდომა", subtitle: "შეიყვანეთ თქვენი ამელის სუპერვაიზერის მონაცემები გასაგრძელებლად.", email: "ელფოსტა ან შესვლა", passcode: "პაროლი", signIn: "შესვლა...", logIn: "შესვლა", welcome: "კეთილი იყოს თქვენი დაბრუნება!", failed: "შესვლა ვერ მოხერხდა." },
       info: { loggedIn: "შესული ხართ როგორც", logout: "გასვლა" },
       panels: { productStudio: "პროდუქტების სტუდია", expensesProfit: "ხარჯები და მოგება", ordersCalendar: "შეკვეთების კალენდარი" },
+      errors: {
+        saveEntry: "ჩანაწერის შენახვა ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან.",
+        updateEntry: "ჩანაწერის განახლება ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან.",
+        deleteEntry: "ჩანაწერის წაშლა ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან.",
+        updateOrder: "შეკვეთის განახლება ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან.",
+        deleteOrder: "შეკვეთის წაშლა ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან."
+      },
       products: {
         addNew: "ახალი პროდუქტის დამატება",
         category: "კატეგორია",
@@ -366,7 +390,7 @@ export const translations = {
   hy: {
     nav: { home: "Գլխավոր", menu: "Մենյու", customOrder: "Պատվեր", supervisor: "Վերահսկիչ", backToMenu: "← Վերադառնալ մենյու" },
     hero: { 
-      eyebrow: "Ամելի սրճարան և հացաբուլկեղեն",
+      eyebrow: "Amelie Coffee & Bakery",
       title: "Amelie Coffee & Bakery",
       subtitle: "Փոքր խմբաքանակի սուրճ, տորթեր, հարսանյաց հաճույքներ և Տամայի քաղցրավենիք:",
       lead: "Ուսումնասիրեք մեր ընտրված հավաքածուները, պատվիրեք առցանց, և մենք կզանգենք հաստատելու համար:",
@@ -382,7 +406,7 @@ export const translations = {
       custom: "Պատվեր",
       tama: "Տամայի ապրանքներ",
       coffeeCollection: "Սուրճի հավաքածու",
-      cakeTama: "Տորթ և Տամայի քաղցրավենիք",
+      cakeTama: "Տորթ և քաղցրավենիք",
       weddingCakes: "Հարսանյաց տորթեր",
       createOrder: "Ստեղծել ձեր սեփական պատվերը",
       descriptionFallback: "Ստորագրության ստեղծագործություններ, որոնք պատրաստվում են Ամելիի թիմի կողմից ամեն առավոտ:",
@@ -402,7 +426,9 @@ export const translations = {
       reviewItems: "Վերանայեք ընտրածները, կարգավորեք քանակները կամ հեռացրեք ապրանքները ուղարկելուց առաջ.",
       addItemsFirst: "Նախ ավելացրեք ապրանքներ զամբյուղում",
       items: "ապրանք(ներ)",
-      addFavorites: "Ավելացրեք ձեր ընտրյալները պատվեր սկսելու համար:"
+      addFavorites: "Ավելացրեք ձեր ընտրյալները պատվեր սկսելու համար:",
+      addedToCart: "{name} ավելացվել է զամբյուղում",
+      orderNow: "Պատվիրել"
     },
     order: { 
       title: "Պատվերի մանրամասներ", 
@@ -432,7 +458,10 @@ export const translations = {
       checkout: "Վճարում",
       customOrderDetails: "Պատվերի մանրամասներ",
       customOrderSubtitle: "Պատմեք մեզ տորթի չափի, բյուջեի և ոգեշնչման մասին: Մենք ամեն ինչ հաստատելու ենք հեռախոսով վճարմանց առաջ:",
-      sendingOrder: "Պատվերի ուղարկում..."
+      sendingOrder: "Պատվերի ուղարկում...",
+      successMessage: "Շնորհակալություն! Մենք շուտով ձեզ կզանգենք հաստատելու համար:",
+      errorMessage: "Ինչ-որ բան սխալ է եղել: Խնդրում ենք կրկին փորձել:",
+      customOrderRequest: "Պատվերի հարցում"
     },
     products: { addToCart: "Ավելացնել զամբյուղ", info: "Տեղեկություն", hideInfo: "Թաքցնել տեղեկությունը" },
     common: {
@@ -447,7 +476,7 @@ export const translations = {
       signingIn: "Մուտք գործում..."
     },
     footer: {
-      copyright: "© {year} Ամելի սրճարան և հացաբուլկեղեն · Թբիլիսի, Վրաստան"
+      copyright: "© {year} Amelie Coffee & Bakery · Թբիլիսի, Վրաստան"
     },
     categories: {
       coffee: "Միակ աղբյուրի էսպրեսո խմիչքներ և դանդաղ եփում, որոնք տապակվում են տանը:",
@@ -462,6 +491,13 @@ export const translations = {
       login: { title: "Վերահսկիչի մուտք", subtitle: "Մուտքագրեք ձեր Ամելիի վերահսկիչի տվյալները շարունակելու համար:", email: "Էլ. փոստ կամ մուտք", passcode: "Գաղտնաբառ", signIn: "Մուտք գործում...", logIn: "Մուտք", welcome: "Բարի վերադարձ!", failed: "Մուտքը ձախողվեց:" },
       info: { loggedIn: "Մուտք եք գործել որպես", logout: "Ելք" },
       panels: { productStudio: "Ապրանքների ստուդիա", expensesProfit: "Ծախսեր և շահույթ", ordersCalendar: "Պատվերների օրացույց" },
+      errors: {
+        saveEntry: "Չհաջողվեց պահպանել գրառումը: Խնդրում ենք կրկին փորձել:",
+        updateEntry: "Չհաջողվեց թարմացնել գրառումը: Խնդրում ենք կրկին փորձել:",
+        deleteEntry: "Չհաջողվեց ջնջել գրառումը: Խնդրում ենք կրկին փորձել:",
+        updateOrder: "Չհաջողվեց թարմացնել պատվերը: Խնդրում ենք կրկին փորձել:",
+        deleteOrder: "Չհաջողվեց ջնջել պատվերը: Խնդրում ենք կրկին փորձել:"
+      },
       products: {
         addNew: "Ավելացնել նոր ապրանք",
         category: "Կատեգորիա",
@@ -546,7 +582,7 @@ export const translations = {
   ru: {
     nav: { home: "Главная", menu: "Меню", customOrder: "Заказ", supervisor: "Супервайзер", backToMenu: "← Назад в меню" },
     hero: { 
-      eyebrow: "Амели Кафе и Кондитерская",
+      eyebrow: "Amelie Coffee & Bakery",
       title: "Amelie Coffee & Bakery",
       subtitle: "Кофе малых партий, торты, свадебные радости и угощения Тама.",
       lead: "Изучите наши кураторские коллекции, разместите заказ онлайн, и мы позвоним для подтверждения финальных деталей.",
@@ -562,7 +598,7 @@ export const translations = {
       custom: "Заказ",
       tama: "Продукты Тама",
       coffeeCollection: "Коллекция кофе",
-      cakeTama: "Торты и сладости Тама",
+      cakeTama: "Торты и сладости",
       weddingCakes: "Свадебные торты",
       createOrder: "Создайте свой заказ",
       descriptionFallback: "Авторские творения, приготовленные командой Амели каждое утро.",
@@ -582,7 +618,9 @@ export const translations = {
       reviewItems: "Просмотрите выбор, измените количество или удалите товары перед отправкой запроса.",
       addItemsFirst: "Сначала добавьте товары в корзину",
       items: "товар(ов)",
-      addFavorites: "Добавьте свои избранные товары, чтобы начать заказ."
+      addFavorites: "Добавьте свои избранные товары, чтобы начать заказ.",
+      addedToCart: "{name} добавлено в корзину",
+      orderNow: "Заказать"
     },
     order: { 
       title: "Детали заказа", 
@@ -612,7 +650,10 @@ export const translations = {
       checkout: "Оформление заказа",
       customOrderDetails: "Детали заказа",
       customOrderSubtitle: "Расскажите нам о размере торта, бюджете и любом вдохновении. Мы подтвердим все по телефону перед оплатой.",
-      sendingOrder: "Отправка заказа..."
+      sendingOrder: "Отправка заказа...",
+      successMessage: "Спасибо! Мы скоро вам позвоним для подтверждения.",
+      errorMessage: "Что-то пошло не так. Пожалуйста, попробуйте снова.",
+      customOrderRequest: "Запрос на заказ"
     },
     products: { addToCart: "Добавить в корзину", info: "Информация", hideInfo: "Скрыть информацию" },
     common: {
@@ -627,7 +668,7 @@ export const translations = {
       signingIn: "Вход..."
     },
     footer: {
-      copyright: "© {year} Амели Кафе и Кондитерская · Тбилиси, Грузия"
+      copyright: "© {year} Amelie Coffee & Bakery · Тбилиси, Грузия"
     },
     categories: {
       coffee: "Эспрессо-напитки из одного источника и медленное заваривание, обжаренные в доме.",
@@ -642,6 +683,13 @@ export const translations = {
       login: { title: "Доступ супервайзера", subtitle: "Введите ваши учетные данные супервайзера Амели для продолжения.", email: "Email или логин", passcode: "Пароль", signIn: "Вход...", logIn: "Войти", welcome: "Добро пожаловать!", failed: "Вход не удался." },
       info: { loggedIn: "Вошли как", logout: "Выйти" },
       panels: { productStudio: "Студия продуктов", expensesProfit: "Расходы и прибыль", ordersCalendar: "Календарь заказов" },
+      errors: {
+        saveEntry: "Не удалось сохранить запись. Пожалуйста, попробуйте снова.",
+        updateEntry: "Не удалось обновить запись. Пожалуйста, попробуйте снова.",
+        deleteEntry: "Не удалось удалить запись. Пожалуйста, попробуйте снова.",
+        updateOrder: "Не удалось обновить заказ. Пожалуйста, попробуйте снова.",
+        deleteOrder: "Не удалось удалить заказ. Пожалуйста, попробуйте снова."
+      },
       products: {
         addNew: "Добавить новый продукт",
         category: "Категория",
