@@ -1,74 +1,217 @@
 {
-  "coffee": [
+  "drinks": [
     {
-      "id": "coffee-amelie-latte",
-      "name": "Amelie Signature Latte",
-      "price": 12,
-      "description": "House espresso, caramelized sugar syrup, steamed milk, vanilla foam.",
-      "image": "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=600&q=80"
+      "id": "drink-cappuccino",
+      "name": "Cappuccino",
+      "price": 5,
+      "description": "Classic espresso with steamed milk and rich foam. Available in 300ml (5₾) and 500ml (5.5₾).",
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80"
     },
     {
-      "id": "coffee-cardamom-cold-brew",
-      "name": "Cardamom Cold Brew",
-      "price": 14,
-      "description": "18-hour brew with cardamom, citrus finish, served over ice.",
-      "image": "https://images.unsplash.com/photo-1464306076886-da185f6a9d12?auto=format&fit=crop&w=600&q=80"
+      "id": "drink-coconut-cappuccino",
+      "name": "Coconut Cappuccino",
+      "price": 4,
+      "description": "Espresso with coconut flavor and creamy foam. Available in 300ml (4₾) and 500ml (4.5₾).",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
     },
     {
-      "id": "coffee-flat-white",
-      "name": "Classic Flat White",
-      "price": 11,
-      "description": "Double ristretto with silky steamed milk and micro-foam art.",
-      "image": "https://images.unsplash.com/photo-1432107294467-6ad2b0f5b42b?auto=format&fit=crop&w=600&q=80"
+      "id": "drink-kinder-coffee",
+      "name": "Kinder Coffee",
+      "price": 5.9,
+      "description": "Sweet Kinder-flavored coffee with chocolate notes. Available in 300ml (5.9₾) and 500ml (6.4₾).",
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-bounty-coffee",
+      "name": "Bounty Coffee",
+      "price": 6,
+      "description": "Coconut and chocolate flavored coffee. Available in 300ml (6₾) and 500ml (6.6₾).",
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-nutella-coffee",
+      "name": "Nutella Coffee",
+      "price": 5.5,
+      "description": "Rich hazelnut chocolate coffee. Available in 300ml (5.5₾) and 500ml (6₾).",
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-americano",
+      "name": "Americano",
+      "price": 4.5,
+      "description": "Espresso with hot water. Available in 300ml (4.5₾) and 500ml (5₾).",
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-latte",
+      "name": "Latte",
+      "price": 6.5,
+      "description": "Smooth espresso with steamed milk. Available in 300ml (6.5₾) and 500ml (7₾).",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-coconut-latte",
+      "name": "Coconut Latte",
+      "price": 7,
+      "description": "Latte with tropical coconut flavor. Available in 300ml (7₾) and 500ml (7.5₾).",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-pistachio-latte",
+      "name": "Pistachio Latte",
+      "price": 7,
+      "description": "Creamy latte with pistachio flavor. Available in 300ml (7₾) and 500ml (7.5₾).",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-caramel-latte",
+      "name": "Caramel Latte",
+      "price": 7,
+      "description": "Sweet caramel latte with smooth milk. Available in 300ml (7₾) and 500ml (7.5₾).",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-bubble-coffee",
+      "name": "Bubble Coffee",
+      "price": 7,
+      "description": "Coffee with tapioca pearls. Available in 300ml (7₾) and 500ml (7.5₾).",
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-berry-mix",
+      "name": "Berry Mix",
+      "price": 4.5,
+      "description": "Refreshing mix of berries. Available in 300ml (4.5₾) and 500ml (5.5₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-citrus-mix",
+      "name": "Citrus Mix",
+      "price": 4.5,
+      "description": "Fresh citrus blend. Available in 300ml (4.5₾) and 500ml (5.5₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-lavanda",
+      "name": "Lavanda",
+      "price": 4.8,
+      "description": "Lavender-infused lemonade. Available in 300ml (4.8₾) and 500ml (5.8₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-mango-marakuja",
+      "name": "Mango-Marakuja",
+      "price": 4.8,
+      "description": "Tropical mango and passion fruit blend. Available in 300ml (4.8₾) and 500ml (5.8₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-mojito",
+      "name": "Mojito",
+      "price": 4.9,
+      "description": "Classic mint mojito. Available in 300ml (4.9₾) and 500ml (5.9₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-strawberry-mojito",
+      "name": "Strawberry Mojito",
+      "price": 4.9,
+      "description": "Fresh strawberry mojito. Available in 300ml (4.9₾) and 500ml (5.9₾).",
+      "image": "https://images.unsplash.com/photo-1523677011783-c91d1bbe2fdc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-green-ginger-tea",
+      "name": "Green Ginger Tea",
+      "price": 5,
+      "description": "Refreshing green tea with ginger. 500ml - 5₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-fruit-garden",
+      "name": "Fruit Garden",
+      "price": 5,
+      "description": "Mixed fruit tea blend. 500ml - 5₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-wild-cherry",
+      "name": "Wild Cherry",
+      "price": 5,
+      "description": "Wild cherry flavored tea. 500ml - 5₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-mango-tea",
+      "name": "Mango Tea",
+      "price": 5,
+      "description": "Mango flavored tea. 500ml - 5₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-pomegranate-bracelet",
+      "name": "Pomegranate Bracelet",
+      "price": 5,
+      "description": "Pomegranate flavored tea. 500ml - 5₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-bubble-tea",
+      "name": "Bubble Tea",
+      "price": 7,
+      "description": "Tea with tapioca pearls. 500ml - 7₾.",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-banana-milkshake",
+      "name": "Banana Milkshake",
+      "price": 7,
+      "description": "Creamy banana milkshake. 7₾.",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-oreo-milkshake",
+      "name": "Oreo Milkshake",
+      "price": 7,
+      "description": "Chocolate cookie milkshake. 7₾.",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-coffee-milkshake",
+      "name": "Coffee Milkshake",
+      "price": 7,
+      "description": "Coffee-flavored milkshake. 7₾.",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-hot-chocolate",
+      "name": "Hot Chocolate",
+      "price": 7,
+      "description": "Rich hot chocolate. 7₾.",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-mango-marakuja-fresh",
+      "name": "Mango-Marakuja Fresh",
+      "price": 4,
+      "description": "Fresh mango and passion fruit juice. 4₾.",
+      "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-raspberry-fresh",
+      "name": "Raspberry Fresh",
+      "price": 4,
+      "description": "Fresh raspberry juice. 4₾.",
+      "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "drink-barberry-fresh",
+      "name": "Barberry Fresh",
+      "price": 4,
+      "description": "Fresh barberry juice. 4₾.",
+      "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80"
     }
   ],
-  "cake": [
-    {
-      "id": "cake-blackberry-lavender",
-      "name": "Blackberry Lavender Cake",
-      "price": 85,
-      "description": "Three-layer sponge with mascarpone cream, lavender syrup, and fresh berries.",
-      "image": "https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      "id": "cake-salted-honey",
-      "name": "Salted Honey Basque Cheesecake",
-      "price": 95,
-      "description": "Burnt cheesecake with sea salt caramel and roasted pistachios.",
-      "image": "https://images.unsplash.com/photo-1505253216365-81b95e0636f5?auto=format&fit=crop&w=600&q=80"
-    }
-  ],
-  "wedding-cakes": [
-    {
-      "id": "wedding-peony-lace",
-      "name": "Peony Lace Tier",
-      "price": 420,
-      "description": "Two-tier vanilla bean cake with raspberry cream and sugar-peony florals.",
-      "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      "id": "wedding-citrus-velvet",
-      "name": "Citrus Velvet Tier",
-      "price": 560,
-      "description": "Three-tier blood orange velvet cake, white chocolate mousse, pressed floral finish.",
-      "image": "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format&fit=crop&w=600&q=80"
-    }
-  ],
-  "tama-products": [
-    {
-      "id": "tama-honey-caramel",
-      "name": "Tama Honey Caramel Jar",
-      "price": 35,
-      "description": "Hazelnut honey spread with caramel ribbons — perfect for gifting.",
-      "image": "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      "id": "tama-pistachio-crunch",
-      "name": "Tama Pistachio Crunch",
-      "price": 38,
-      "description": "Nougat-inspired bar with pistachio, rose petals, and white chocolate drizzle.",
-      "image": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=600&q=80"
-    }
-  ]
+  "cake": [],
+  "wedding-cakes": [],
+  "tama-products": []
 }
-

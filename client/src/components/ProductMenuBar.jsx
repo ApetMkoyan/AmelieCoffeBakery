@@ -3,7 +3,7 @@ import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { scrollToElementById } from "../utils/scroll.js";
 
 const menuSections = [
-  { id: "coffee", labelKey: "menu.coffee" },
+  { id: "drinks", labelKey: "menu.drinks" },
   { id: "cake", labelKey: "menu.cake" },
   { id: "wedding-cakes", labelKey: "menu.wedding" },
   { id: "custom-order", labelKey: "menu.custom" },

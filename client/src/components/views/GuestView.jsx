@@ -36,7 +36,7 @@ function GuestView({
     }
 
     const descriptions = {
-      coffee: t("categories.coffee"),
+      drinks: t("categories.drinks"),
       cake: t("categories.cake"),
       "wedding-cakes": t("categories.wedding-cakes"),
       "tama-products": t("categories.tama-products"),

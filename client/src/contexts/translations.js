@@ -17,7 +17,7 @@ export const translations = {
       wedding: "Wedding Cakes", 
       custom: "Custom Order",
       tama: "Tama Products",
-      coffeeCollection: "Coffee Collection",
+      drinks: "Drinks",
       cakeTama: "Cake & Sweets",
       weddingCakes: "Wedding Cakes",
       createOrder: "Create Your Own Order",
@@ -95,7 +95,7 @@ export const translations = {
       copyright: "© {year} Amelie Coffee & Bakery · Tbilisi, Georgia"
     },
     categories: {
-      coffee: "Single-origin espresso drinks and slow brews roasted in-house.",
+      drinks: "Coffee, lemonades, tea, milkshakes, and fresh juices - all your favorite beverages in one place.",
       cake: "Seasonal cakes finished with botanicals and artisanal chocolate.",
       "wedding-cakes": "Made-to-order showpieces tailored for your celebration.",
       "tama-products": "Handcrafted Tama sweets packaged for gifting or events."
@@ -213,7 +213,7 @@ export const translations = {
       wedding: "ქორწილის ტორტები", 
       custom: "შეკვეთა",
       tama: "ტამას პროდუქტები",
-      coffeeCollection: "ყავის კოლექცია",
+      drinks: "სასმელები",
       cakeTama: "ტორტი და ტკბილეული",
       weddingCakes: "ქორწილის ტორტები",
       createOrder: "შექმენით საკუთარი შეკვეთა",
@@ -287,7 +287,7 @@ export const translations = {
       copyright: "© {year} Amelie Coffee & Bakery · თბილისი, საქართველო"
     },
     categories: {
-      coffee: "ერთჯერადი ესპრესო სასმელები და ნელი ხარშვა, რომლებიც მომზადებულია სახლში.",
+      drinks: "ყავა, ლიმონათი, ჩაი, მილკშეიკები და ფრეშ ჩირს - ყველა თქვენი საყვარელი სასმელი ერთ ადგილზე.",
       cake: "სეზონური ტორტები, დასრულებული ბოტანიკური და ხელოვნური შოკოლადით.",
       "wedding-cakes": "შეკვეთით დამზადებული ნაწარმოებები, რომლებიც მორგებულია თქვენს დღესასწაულზე.",
       "tama-products": "ხელნაკეთი ტამას ტკბილეული, შეფუთული საჩუქრად ან ღონისძიებებისთვის."
@@ -405,7 +405,7 @@ export const translations = {
       wedding: "Հարսանյաց տորթեր", 
       custom: "Պատվեր",
       tama: "Տամայի ապրանքներ",
-      coffeeCollection: "Սուրճի հավաքածու",
+      drinks: "Սასմելներ",
       cakeTama: "Տորթ և քաղցրավենիք",
       weddingCakes: "Հարսանյաց տորթեր",
       createOrder: "Ստեղծել ձեր սեփական պատվերը",
@@ -479,7 +479,7 @@ export const translations = {
       copyright: "© {year} Amelie Coffee & Bakery · Թբիլիսի, Վրաստան"
     },
     categories: {
-      coffee: "Միակ աղբյուրի էսպրեսո խմիչքներ և դանդաղ եփում, որոնք տապակվում են տանը:",
+      drinks: "Սուրճ, լիմոնադներ, թեյ, միլքշեյքներ և թարմ հյութեր - բոլոր ձեր սիրելի խմիչքները մի տեղում:",
       cake: "Սեզոնային տորթեր, ավարտված բուսաբանական և արհեստական շոկոլադով:",
       "wedding-cakes": "Պատվերով պատրաստված ցուցանմուշներ, որոնք հարմարեցված են ձեր տոնակատարությանը:",
       "tama-products": "Ձեռագործ Տամայի քաղցրավենիք, փաթաթված նվերի կամ միջոցառումների համար:"
@@ -597,7 +597,7 @@ export const translations = {
       wedding: "Свадебные торты", 
       custom: "Заказ",
       tama: "Продукты Тама",
-      coffeeCollection: "Коллекция кофе",
+      drinks: "Напитки",
       cakeTama: "Торты и сладости",
       weddingCakes: "Свадебные торты",
       createOrder: "Создайте свой заказ",
@@ -671,7 +671,7 @@ export const translations = {
       copyright: "© {year} Amelie Coffee & Bakery · Тбилиси, Грузия"
     },
     categories: {
-      coffee: "Эспрессо-напитки из одного источника и медленное заваривание, обжаренные в доме.",
+      drinks: "Кофе, лимонады, чай, милкшейки и свежие соки - все ваши любимые напитки в одном месте.",
       cake: "Сезонные торты, украшенные ботаническими и артистическими шоколадными изделиями.",
       "wedding-cakes": "Изготовленные на заказ экспонаты, адаптированные для вашего празднования.",
       "tama-products": "Ручные сладости Тама, упакованные для подарков или мероприятий."
