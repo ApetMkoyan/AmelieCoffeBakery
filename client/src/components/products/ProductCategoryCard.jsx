@@ -66,14 +66,29 @@ function ProductCardEntry({ item, onAddToCart }) {
   useEffect(() => {
     if (!showInfo) return;
 
+    // Prevent body scroll when description is open on mobile
+    const isMobile = window.innerWidth <= 640;
+    if (isMobile) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target)) {
         setShowInfo(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // Use touchstart for mobile for better performance
+    const eventType = window.innerWidth <= 640 ? "touchstart" : "mousedown";
+    const options = window.innerWidth <= 640 ? { passive: true } : false;
+    
+    document.addEventListener(eventType, handleClickOutside, options);
+    return () => document.removeEventListener(eventType, handleClickOutside, options);
   }, [showInfo]);
 
   const handleAddToCart = () => {

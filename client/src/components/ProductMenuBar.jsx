@@ -4,6 +4,7 @@ import { scrollToElementById } from "../utils/scroll.js";
 
 const menuSections = [
   { id: "drinks", labelKey: "menu.drinks" },
+  { id: "baked-goods", labelKey: "menu.bakedGoods" },
   { id: "cake", labelKey: "menu.cake" },
   { id: "wedding-cakes", labelKey: "menu.wedding" },
   { id: "custom-order", labelKey: "menu.custom" },

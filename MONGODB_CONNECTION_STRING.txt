@@ -1,0 +1,28 @@
+ИНСТРУКЦИЯ: Как правильно сформировать Connection String
+
+Ваша строка от MongoDB Atlas:
+mongodb+srv://apet-mkoyan-01:<db_password>@amelie.7y5r1bs.mongodb.net/?appName=Amelie
+
+ШАГ 1: Замените <db_password> на ваш реальный пароль
+(Пароль, который вы создали в Database Access → Add New Database User)
+
+ШАГ 2: Добавьте имя базы данных /amelie-cafe перед знаком ?
+
+ПРАВИЛЬНЫЙ ФОРМАТ:
+mongodb+srv://apet-mkoyan-01:ВАШ_ПАРОЛЬ@amelie.7y5r1bs.mongodb.net/amelie-cafe?retryWrites=true&w=majority
+
+ПРИМЕР (если пароль "MyPassword123"):
+mongodb+srv://apet-mkoyan-01:MyPassword123@amelie.7y5r1bs.mongodb.net/amelie-cafe?retryWrites=true&w=majority
+
+ШАГ 3: Скопируйте эту строку и добавьте в Vercel:
+1. Vercel → Ваш проект → Settings → Environment Variables
+2. Нажмите "Add New"
+3. Имя: MONGODB_URI
+4. Значение: вставьте строку выше (с вашим паролем)
+5. Environment: выберите все (Production, Preview, Development)
+6. Сохраните
+
+ШАГ 4: Перезапустите деплой в Vercel
+
+⚠️ ВАЖНО: Не делитесь этой строкой ни с кем! Она содержит пароль к вашей базе данных.
+

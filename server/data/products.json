@@ -12,7 +12,8 @@
       "name": "Coconut Cappuccino",
       "price": 4,
       "description": "Espresso with coconut flavor and creamy foam. Available in 300ml (4₾) and 500ml (4.5₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://img.freepik.com/premium-photo/cup-coffee-coconuts-white-background_392895-239757.jpg",
+      "updatedAt": "2025-11-27T11:16:38.257Z"
     },
     {
       "id": "drink-kinder-coffee",
@@ -26,7 +27,8 @@
       "name": "Bounty Coffee",
       "price": 6,
       "description": "Coconut and chocolate flavored coffee. Available in 300ml (6₾) and 500ml (6.6₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://content.instructables.com/FYR/3U0Z/I028V2WF/FYR3U0ZI028V2WF.jpg?auto=webp",
+      "updatedAt": "2025-11-27T11:22:28.845Z"
     },
     {
       "id": "drink-nutella-coffee",

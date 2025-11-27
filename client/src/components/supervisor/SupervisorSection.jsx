@@ -14,6 +14,8 @@ function SupervisorSection({
   onEditEntry,
   onDeleteEntry,
   onAddProduct,
+  onEditProduct,
+  onDeleteProduct,
   onUpdateOrderStatus,
   onDeleteOrder,
   onLogin,
@@ -41,6 +43,8 @@ function SupervisorSection({
         onEditEntry={onEditEntry}
         onDeleteEntry={onDeleteEntry}
         onAddProduct={onAddProduct}
+        onEditProduct={onEditProduct}
+        onDeleteProduct={onDeleteProduct}
         onUpdateOrderStatus={onUpdateOrderStatus}
         onDeleteOrder={onDeleteOrder}
         onLogout={onLogout}

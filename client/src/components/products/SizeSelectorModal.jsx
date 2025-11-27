@@ -15,9 +15,16 @@ function SizeSelectorModal({ product, onSelect, onClose }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+
     const handleEscape = (e) => {
       if (e.key === "Escape") onClose();
     };
+    
+    // Use touchstart for mobile devices for better performance
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         onClose();
@@ -25,10 +32,19 @@ function SizeSelectorModal({ product, onSelect, onClose }) {
     };
 
     document.addEventListener("keydown", handleEscape);
+    // Use both mousedown and touchstart for better mobile support
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
+    
     return () => {
+      // Restore body scroll
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [onClose]);
 

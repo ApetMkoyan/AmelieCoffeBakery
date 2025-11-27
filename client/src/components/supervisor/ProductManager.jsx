@@ -33,23 +33,49 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
     event.preventDefault();
     setStatus({ type: "loading", message: t("supervisor.products.saving") });
     
-    if (editingId) {
-      const result = await onEditProduct(editingId, form);
-      if (result.success) {
-        setStatus({ type: "success", message: t("supervisor.products.saved") });
-        setForm(blankProduct);
-        setEditingId(null);
+    try {
+      if (editingId) {
+        const result = await onEditProduct(editingId, form);
+        if (result && result.success) {
+          setStatus({ type: "success", message: t("supervisor.products.saved") });
+          // Clear form and reset editing state
+          const currentCategory = form.category;
+          setForm({ ...blankProduct, category: currentCategory });
+          setEditingId(null);
+          // Clear status message after 2 seconds
+          setTimeout(() => {
+            setStatus({ type: "idle", message: "" });
+          }, 2000);
+        } else {
+          setStatus({ 
+            type: "error", 
+            message: result?.message || t("supervisor.products.failed") 
+          });
+        }
       } else {
-        setStatus({ type: "error", message: result.message || t("supervisor.products.failed") });
+        const result = await onAddProduct(form);
+        if (result && result.success) {
+          setStatus({ type: "success", message: t("supervisor.products.saved") });
+          // Clear form but keep current category
+          const currentCategory = form.category;
+          setForm({ ...blankProduct, category: currentCategory });
+          // Clear status message after 2 seconds
+          setTimeout(() => {
+            setStatus({ type: "idle", message: "" });
+          }, 2000);
+        } else {
+          setStatus({ 
+            type: "error", 
+            message: result?.message || t("supervisor.products.failed") 
+          });
+        }
       }
-    } else {
-      const result = await onAddProduct(form);
-      if (result.success) {
-        setStatus({ type: "success", message: t("supervisor.products.saved") });
-        setForm((prev) => ({ ...blankProduct, category: prev.category }));
-      } else {
-        setStatus({ type: "error", message: result.message || t("supervisor.products.failed") });
-      }
+    } catch (error) {
+      console.error("Error submitting product form:", error);
+      setStatus({ 
+        type: "error", 
+        message: error.message || t("supervisor.products.failed") 
+      });
     }
   };
 

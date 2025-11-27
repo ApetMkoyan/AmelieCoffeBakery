@@ -6,7 +6,24 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { nanoid } from "nanoid";
-import { readJson, writeJson } from "./utils/storage.js";
+
+// Use MongoDB if MONGODB_URI is set, otherwise use file storage
+const USE_MONGODB = !!process.env.MONGODB_URI;
+let readJson, writeJson, connectDB;
+
+// Dynamically import storage based on environment
+if (USE_MONGODB) {
+  const mongoStorage = await import("./utils/storage-mongo.js");
+  const db = await import("./utils/db.js");
+  readJson = mongoStorage.readJson;
+  writeJson = mongoStorage.writeJson;
+  connectDB = db.connectDB;
+} else {
+  const fileStorage = await import("./utils/storage.js");
+  readJson = fileStorage.readJson;
+  writeJson = fileStorage.writeJson;
+  connectDB = async () => {};
+}
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -34,6 +51,9 @@ const SUPERVISOR_PASSCODE =
 const activeSessions = new Map();
 
 const ensureDefaults = async () => {
+  if (USE_MONGODB) {
+    await connectDB();
+  }
   await readJson(PRODUCTS_FILE, {});
   await readJson(ORDERS_FILE, []);
   await readJson(CONSUMABLES_FILE, []);
@@ -166,20 +186,15 @@ app.patch(
       const products = await readJson(PRODUCTS_FILE, {});
       
       let found = false;
+      let targetCategory = null;
+      let targetIndex = -1;
+      
+      // First, find the product
       for (const cat in products) {
         const index = products[cat].findIndex((p) => p.id === productId);
         if (index !== -1) {
-          if (name) products[cat][index].name = name;
-          if (price !== undefined) products[cat][index].price = Number(price);
-          if (description) products[cat][index].description = description;
-          if (image !== undefined) products[cat][index].image = image;
-          if (category && category !== cat) {
-            const product = products[cat][index];
-            products[cat].splice(index, 1);
-            if (!products[category]) products[category] = [];
-            products[category].push(product);
-          }
-          products[cat][index].updatedAt = new Date().toISOString();
+          targetCategory = cat;
+          targetIndex = index;
           found = true;
           break;
         }
@@ -187,6 +202,23 @@ app.patch(
       
       if (!found) {
         return res.status(404).json({ error: "Product not found" });
+      }
+      
+      // Update product fields
+      const product = products[targetCategory][targetIndex];
+      if (name !== undefined) product.name = name;
+      if (price !== undefined) product.price = Number(price);
+      if (description !== undefined) product.description = description;
+      if (image !== undefined) product.image = image;
+      product.updatedAt = new Date().toISOString();
+      
+      // If category changed, move product to new category
+      if (category && category !== targetCategory) {
+        // Remove from old category
+        products[targetCategory].splice(targetIndex, 1);
+        // Add to new category
+        if (!products[category]) products[category] = [];
+        products[category].push(product);
       }
       
       await writeJson(PRODUCTS_FILE, products);
@@ -240,31 +272,44 @@ app.post(
   "/api/consumables",
   authenticateSupervisor,
   async (req, res, next) => {
-  try {
+    try {
       const requiredFields = ["date", "item"];
       const missing = requiredFields.filter((field) => !req.body[field]);
-    if (missing.length) {
-      return res
-        .status(400)
-        .json({ error: `Missing required fields: ${missing.join(", ")}` });
+      if (missing.length) {
+        return res
+          .status(400)
+          .json({ error: `Missing required fields: ${missing.join(", ")}` });
+      }
+
+      // Validate amounts
+      const expense = Number(req.body.expense || 0);
+      const profit = Number(req.body.profit || 0);
+      
+      if (isNaN(expense) || expense < 0) {
+        return res.status(400).json({ error: "Invalid expense amount" });
+      }
+      if (isNaN(profit) || profit < 0) {
+        return res.status(400).json({ error: "Invalid profit amount" });
+      }
+
+      const entry = {
+        id: nanoid(),
+        date: String(req.body.date),
+        item: String(req.body.item),
+        expense: expense,
+        profit: profit,
+        createdAt: new Date().toISOString(),
+      };
+
+      const consumables = await readJson(CONSUMABLES_FILE, []);
+      consumables.push(entry);
+      await writeJson(CONSUMABLES_FILE, consumables);
+
+      res.status(201).json({ message: "Consumable entry added", entry });
+    } catch (error) {
+      console.error("Error adding consumable:", error);
+      next(error);
     }
-
-    const entry = {
-      id: nanoid(),
-      ...req.body,
-        expense: Number(req.body.expense || 0),
-        profit: Number(req.body.profit || 0),
-      createdAt: new Date().toISOString(),
-    };
-
-    const consumables = await readJson(CONSUMABLES_FILE, []);
-    consumables.push(entry);
-    await writeJson(CONSUMABLES_FILE, consumables);
-
-    res.status(201).json({ message: "Consumable entry added", entry });
-  } catch (error) {
-    next(error);
-  }
   }
 );
 
@@ -348,20 +393,42 @@ app.patch(
   async (req, res, next) => {
     try {
       const { entryId } = req.params;
-      const { item, expense, profit } = req.body || {};
+      const { item, expense, profit, date } = req.body || {};
+      
+      // Validate entryId
+      if (!entryId) {
+        return res.status(400).json({ error: "Entry ID is required" });
+      }
+      
       const consumables = await readJson(CONSUMABLES_FILE, []);
       const index = consumables.findIndex((entry) => entry.id === entryId);
       if (index === -1) {
         return res.status(404).json({ error: "Entry not found" });
       }
-      if (item) consumables[index].item = item;
-      if (expense !== undefined)
-        consumables[index].expense = Number(expense);
-      if (profit !== undefined) consumables[index].profit = Number(profit);
+      
+      // Update fields if provided
+      if (item !== undefined) consumables[index].item = String(item);
+      if (expense !== undefined) {
+        const expenseNum = Number(expense);
+        if (isNaN(expenseNum) || expenseNum < 0) {
+          return res.status(400).json({ error: "Invalid expense amount" });
+        }
+        consumables[index].expense = expenseNum;
+      }
+      if (profit !== undefined) {
+        const profitNum = Number(profit);
+        if (isNaN(profitNum) || profitNum < 0) {
+          return res.status(400).json({ error: "Invalid profit amount" });
+        }
+        consumables[index].profit = profitNum;
+      }
+      if (date) consumables[index].date = date;
+      
       consumables[index].updatedAt = new Date().toISOString();
       await writeJson(CONSUMABLES_FILE, consumables);
       res.json({ message: "Entry updated", entry: consumables[index] });
     } catch (error) {
+      console.error("Error updating consumable:", error);
       next(error);
     }
   }
@@ -373,14 +440,24 @@ app.delete(
   async (req, res, next) => {
     try {
       const { entryId } = req.params;
+      
+      // Validate entryId
+      if (!entryId) {
+        return res.status(400).json({ error: "Entry ID is required" });
+      }
+      
       const consumables = await readJson(CONSUMABLES_FILE, []);
+      const initialLength = consumables.length;
       const filtered = consumables.filter((entry) => entry.id !== entryId);
-      if (filtered.length === consumables.length) {
+      
+      if (filtered.length === initialLength) {
         return res.status(404).json({ error: "Entry not found" });
       }
+      
       await writeJson(CONSUMABLES_FILE, filtered);
       res.json({ message: "Entry deleted" });
     } catch (error) {
+      console.error("Error deleting consumable:", error);
       next(error);
     }
   }

@@ -78,6 +78,8 @@ function App() {
     loading: false,
     error: "",
   });
+  // Track ongoing operations to prevent race conditions
+  const [consumableOperationInProgress, setConsumableOperationInProgress] = useState(false);
 
   // Orders
   const [orders, setOrders] = useState([]);
@@ -210,48 +212,93 @@ function App() {
 
   const handleConsumableSubmit = async (payload) => {
     if (!supervisorToken) return false;
+    // Prevent multiple simultaneous operations
+    if (consumableOperationInProgress) {
+      console.warn("Consumable operation already in progress");
+      return false;
+    }
+    
+    setConsumableOperationInProgress(true);
+    // Clear previous errors and set loading state
+    setConsumableState({ loading: true, error: "" });
+    
     try {
       await apiPost("/consumables", payload, supervisorToken);
+      // Small delay to ensure server has processed the write
+      await new Promise(resolve => setTimeout(resolve, 100));
       await fetchConsumables();
+      setConsumableState({ loading: false, error: "" });
+      setConsumableOperationInProgress(false);
       return true;
     } catch (error) {
       console.error("Error submitting consumable:", error);
-      setConsumableState((prev) => ({
-        ...prev,
+      setConsumableState({
+        loading: false,
         error: t("supervisor.errors.saveEntry"),
-      }));
+      });
+      setConsumableOperationInProgress(false);
       return false;
     }
   };
 
   const handleEditConsumable = async (entryId, updates) => {
     if (!supervisorToken) return false;
+    // Prevent multiple simultaneous operations
+    if (consumableOperationInProgress) {
+      console.warn("Consumable operation already in progress");
+      return false;
+    }
+    
+    setConsumableOperationInProgress(true);
+    // Clear previous errors and set loading state
+    setConsumableState({ loading: true, error: "" });
+    
     try {
       await apiPatch(`/consumables/${entryId}`, updates, supervisorToken);
+      // Small delay to ensure server has processed the write
+      await new Promise(resolve => setTimeout(resolve, 100));
       await fetchConsumables();
+      setConsumableState({ loading: false, error: "" });
+      setConsumableOperationInProgress(false);
       return true;
     } catch (error) {
       console.error("Error editing consumable:", error);
-      setConsumableState((prev) => ({
-        ...prev,
+      setConsumableState({
+        loading: false,
         error: t("supervisor.errors.updateEntry"),
-      }));
+      });
+      setConsumableOperationInProgress(false);
       return false;
     }
   };
 
   const handleDeleteConsumable = async (entryId) => {
     if (!supervisorToken) return false;
+    // Prevent multiple simultaneous operations
+    if (consumableOperationInProgress) {
+      console.warn("Consumable operation already in progress");
+      return false;
+    }
+    
+    setConsumableOperationInProgress(true);
+    // Clear previous errors and set loading state
+    setConsumableState({ loading: true, error: "" });
+    
     try {
       await apiDelete(`/consumables/${entryId}`, supervisorToken);
+      // Small delay to ensure server has processed the write
+      await new Promise(resolve => setTimeout(resolve, 100));
       await fetchConsumables();
+      setConsumableState({ loading: false, error: "" });
+      setConsumableOperationInProgress(false);
       return true;
     } catch (error) {
       console.error("Error deleting consumable:", error);
-      setConsumableState((prev) => ({
-        ...prev,
+      setConsumableState({
+        loading: false,
         error: t("supervisor.errors.deleteEntry"),
-      }));
+      });
+      setConsumableOperationInProgress(false);
       return false;
     }
   };

@@ -6,5 +6,21 @@
     "expense": 10,
     "profit": 10,
     "createdAt": "2025-11-25T08:06:25.208Z"
+  },
+  {
+    "id": "vcnFCO717WtgwykLOGPct",
+    "date": "2025-11-27",
+    "item": "круасан",
+    "expense": 0,
+    "profit": 7,
+    "createdAt": "2025-11-27T09:51:01.744Z"
+  },
+  {
+    "id": "CwDOro2MipTX8bNOq4j_O",
+    "date": "2025-11-27",
+    "item": "макарон",
+    "expense": 3,
+    "profit": 0,
+    "createdAt": "2025-11-27T09:51:55.127Z"
   }
 ]
