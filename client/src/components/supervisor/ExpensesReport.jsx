@@ -102,6 +102,7 @@ function ExpensesReport({ consumables, state, onEditEntry, onDeleteEntry }) {
       payload.profit = 0;
     } else {
       payload.profit = Number(nextAmount);
+      
       payload.expense = 0;
     }
     onEditEntry?.(row.id, payload);

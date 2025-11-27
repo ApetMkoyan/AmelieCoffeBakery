@@ -46,8 +46,9 @@ const PRODUCTS_FILE = "products.json";
 const ORDERS_FILE = "orders.json";
 const CONSUMABLES_FILE = "consumables.json";
 const DAILY_RECORDS_FILE = "daily-records.json";
+const SUPERVISOR_LOGIN = process.env.SUPERVISOR_LOGIN || "Amelie123";
 const SUPERVISOR_PASSCODE =
-  process.env.SUPERVISOR_PASSCODE || "Amelie123";
+  process.env.SUPERVISOR_PASSCODE || "9512357*";
 const activeSessions = new Map();
 
 // Migrate data from JSON files to MongoDB if MongoDB is empty
@@ -221,7 +222,7 @@ app.post("/api/supervisor/login", (req, res) => {
   if (!email || !passcode) {
     return res.status(400).json({ error: "Email and passcode are required" });
   }
-  if (passcode !== SUPERVISOR_PASSCODE) {
+  if (email !== SUPERVISOR_LOGIN || passcode !== SUPERVISOR_PASSCODE) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
   const token = nanoid();

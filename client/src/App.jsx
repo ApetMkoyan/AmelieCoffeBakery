@@ -66,7 +66,7 @@ function App() {
   const [forceOrderType, setForceOrderType] = useState(null);
 
   // Supervisor state
-  const [supervisorToken, setSupervisorToken] = useState(loadSupervisorToken);
+  const [supervisorToken, setSupervisorToken] = useState(() => loadSupervisorToken());
   const [supervisorProfile, setSupervisorProfile] = useState(() => {
     const email = loadSupervisorEmail();
     return email ? { email } : null;
@@ -108,7 +108,7 @@ function App() {
     } catch (error) {
       console.error("Error fetching consumables:", error);
       setConsumableState({ loading: false, error: error.message });
-      if (error.message.includes("expired")) {
+      if (error.message && (error.message.includes("expired") || error.message.includes("Unauthorized"))) {
         handleSupervisorLogout();
       }
     }
@@ -125,7 +125,7 @@ function App() {
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrdersState({ loading: false, error: error.message });
-      if (error.message.includes("expired")) {
+      if (error.message && (error.message.includes("expired") || error.message.includes("Unauthorized"))) {
         handleSupervisorLogout();
       }
     }
@@ -196,17 +196,37 @@ function App() {
   const handleSupervisorLogin = async (credentials) => {
     try {
       const data = await apiPost("/supervisor/login", credentials);
+      if (!data || !data.token) {
+        return { success: false, message: "Invalid response from server" };
+      }
+      
       saveSupervisorToken(data.token);
-      setSupervisorToken(data.token);
+      const newToken = data.token;
+      setSupervisorToken(newToken);
+      
       if (data.profile?.email) {
         saveSupervisorEmail(data.profile.email);
         setSupervisorProfile(data.profile);
       }
+      
       setConsumableState({ loading: false, error: "" });
+      
+      // Fetch data with new token
+      try {
+        const [consumablesData, ordersData] = await Promise.all([
+          apiGet("/consumables", newToken),
+          apiGet("/orders", newToken),
+        ]);
+        setConsumables(consumablesData);
+        setOrders(ordersData);
+      } catch (fetchError) {
+        console.error("Error fetching initial data:", fetchError);
+      }
+      
       return { success: true };
     } catch (error) {
       console.error("Login error:", error);
-      return { success: false, message: error.message };
+      return { success: false, message: error.message || "Login failed" };
     }
   };
 

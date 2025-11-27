@@ -11,7 +11,9 @@ export async function apiRequest(endpoint, options = {}) {
   });
 
   if (response.status === 401) {
-    throw new Error("Session expired. Please log in again.");
+    const error = new Error("Unauthorized");
+    error.status = 401;
+    throw error;
   }
 
   if (!response.ok) {

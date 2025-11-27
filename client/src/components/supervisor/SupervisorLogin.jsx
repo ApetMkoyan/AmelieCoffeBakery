@@ -39,7 +39,7 @@ function SupervisorLogin({ onLogin }) {
         <input
           type="text"
           name="email"
-          placeholder="AmelieCoffeeBakery"
+          placeholder="Amelie123"
           value={form.email}
           onChange={handleChange}
           required
