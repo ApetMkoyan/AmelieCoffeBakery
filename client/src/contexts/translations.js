@@ -18,6 +18,7 @@ export const translations = {
       custom: "Custom Order",
       tama: "Tama Products",
       drinks: "Drinks",
+      bakedGoods: "Baked Goods",
       cakeTama: "Cake & Sweets",
       weddingCakes: "Wedding Cakes",
       createOrder: "Create Your Own Order",
@@ -43,8 +44,11 @@ export const translations = {
       orderNow: "Order Now"
     },
     order: { 
-      title: "Custom Order Details", 
-      subtitle: "Tell us about the cake size, budget, and any inspiration. We'll confirm everything by phone before payment.", 
+      title: "Order Details", 
+      subtitle: "Tell us about the cake size, budget, and any inspiration. We'll confirm everything by phone before payment.",
+      checkoutType: "Checkout from Cart",
+      customType: "Create Custom Order",
+      emptyCartMessage: "Your cart is empty. Please add items to cart or choose 'Create Custom Order'.", 
       firstName: "First Name", 
       lastName: "Last Name", 
       phone: "Phone Number", 
@@ -62,7 +66,8 @@ export const translations = {
       budgetRangePlaceholder: "e.g., 150-200",
       notes: "Notes", 
       notesPlaceholder: "Any special requests or details...",
-      placeOrder: "Place Order", 
+      placeOrder: "Place Order",
+      reviewOrder: "Review Order",
       submitting: "Submitting...", 
       success: "Thanks! We'll call you shortly to confirm.", 
       error: "Something went wrong. Please try again.", 
@@ -74,6 +79,14 @@ export const translations = {
       successMessage: "Thanks! We'll call you shortly to confirm.",
       errorMessage: "Something went wrong. Please try again.",
       customOrderRequest: "Custom order request"
+    },
+    orderReview: {
+      title: "Review Your Order",
+      subtitle: "Please review your order details before confirming",
+      itemsTitle: "Order Items",
+      customerInfo: "Customer Information",
+      back: "Back to Form",
+      confirmOrder: "Confirm Order"
     },
     products: { 
       addToCart: "Add to cart", 
@@ -96,6 +109,7 @@ export const translations = {
     },
     categories: {
       drinks: "Coffee, lemonades, tea, milkshakes, and fresh juices - all your favorite beverages in one place.",
+      "baked-goods": "Fresh pastries, tarts, mousses, and sweet treats baked daily.",
       cake: "Seasonal cakes finished with botanicals and artisanal chocolate.",
       "wedding-cakes": "Made-to-order showpieces tailored for your celebration.",
       "tama-products": "Handcrafted Tama sweets packaged for gifting or events."
@@ -214,6 +228,7 @@ export const translations = {
       custom: "შეკვეთა",
       tama: "ტამას პროდუქტები",
       drinks: "სასმელები",
+      bakedGoods: "ცხობა",
       cakeTama: "ტორტი და ტკბილეული",
       weddingCakes: "ქორწილის ტორტები",
       createOrder: "შექმენით საკუთარი შეკვეთა",
@@ -240,7 +255,10 @@ export const translations = {
     },
     order: { 
       title: "შეკვეთის დეტალები", 
-      subtitle: "გვითხარით ტორტის ზომის, ბიუჯეტისა და ინსპირაციის შესახებ. ყველაფერს ტელეფონით დავადასტურებთ გადახდამდე.", 
+      subtitle: "გვითხარით ტორტის ზომის, ბიუჯეტისა და ინსპირაციის შესახებ. ყველაფერს ტელეფონით დავადასტურებთ გადახდამდე.",
+      checkoutType: "კალათიდან შეკვეთა",
+      customType: "საკუთარი შეკვეთის შექმნა",
+      emptyCartMessage: "თქვენი კალათა ცარიელია. გთხოვთ, დაამატოთ პროდუქტები ან აირჩიოთ 'საკუთარი შეკვეთის შექმნა'.", 
       firstName: "სახელი", 
       lastName: "გვარი", 
       phone: "ტელეფონი", 
@@ -258,7 +276,8 @@ export const translations = {
       budgetRangePlaceholder: "მაგ., 150-200",
       notes: "შენიშვნები", 
       notesPlaceholder: "ნებისმიერი სპეციალური მოთხოვნა ან დეტალი...",
-      placeOrder: "შეკვეთის გაგზავნა", 
+      placeOrder: "შეკვეთის გაგზავნა",
+      reviewOrder: "შეკვეთის გადამოწმება",
       submitting: "იგზავნება...", 
       success: "გმადლობთ! მალე დაგირეკავთ დასადასტურებლად.", 
       error: "რაღაც შეცდომა მოხდა. გთხოვთ, სცადოთ თავიდან.", 
@@ -270,6 +289,14 @@ export const translations = {
       successMessage: "გმადლობთ! მალე დაგირეკავთ დასადასტურებლად.",
       errorMessage: "რაღაც შეცდომა მოხდა. გთხოვთ, სცადოთ თავიდან.",
       customOrderRequest: "შეკვეთის მოთხოვნა"
+    },
+    orderReview: {
+      title: "გადაამოწმეთ თქვენი შეკვეთა",
+      subtitle: "გთხოვთ, გადაამოწმოთ შეკვეთის დეტალები დადასტურებამდე",
+      itemsTitle: "შეკვეთის ნივთები",
+      customerInfo: "მომხმარებლის ინფორმაცია",
+      back: "ფორმაზე დაბრუნება",
+      confirmOrder: "შეკვეთის დადასტურება"
     },
     products: { addToCart: "კალათაში დამატება", info: "ინფორმაცია", hideInfo: "ინფორმაციის დამალვა" },
     common: {
@@ -288,6 +315,7 @@ export const translations = {
     },
     categories: {
       drinks: "ყავა, ლიმონათი, ჩაი, მილკშეიკები და ფრეშ ჩირს - ყველა თქვენი საყვარელი სასმელი ერთ ადგილზე.",
+      "baked-goods": "ახალი ცხობა, ტარტები, მუსები და ტკბილეული, რომელიც ყოველდღე იცხობება.",
       cake: "სეზონური ტორტები, დასრულებული ბოტანიკური და ხელოვნური შოკოლადით.",
       "wedding-cakes": "შეკვეთით დამზადებული ნაწარმოებები, რომლებიც მორგებულია თქვენს დღესასწაულზე.",
       "tama-products": "ხელნაკეთი ტამას ტკბილეული, შეფუთული საჩუქრად ან ღონისძიებებისთვის."
@@ -406,6 +434,7 @@ export const translations = {
       custom: "Պատվեր",
       tama: "Տամայի ապրանքներ",
       drinks: "Սასմելներ",
+      bakedGoods: "Հրուշակեղեն",
       cakeTama: "Տորթ և քաղցրավենիք",
       weddingCakes: "Հարսանյաց տորթեր",
       createOrder: "Ստեղծել ձեր սեփական պատվերը",
@@ -432,7 +461,10 @@ export const translations = {
     },
     order: { 
       title: "Պատվերի մանրամասներ", 
-      subtitle: "Պատմեք մեզ տորթի չափի, բյուջեի և ոգեշնչման մասին: Մենք ամեն ինչ հաստատելու ենք հեռախոսով վճարմանց առաջ:", 
+      subtitle: "Պատմեք մեզ տորթի չափի, բյուջեի և ոգեշնչման մասին: Մենք ամեն ինչ հաստատելու ենք հեռախոսով վճարմանց առաջ:",
+      checkoutType: "Պատվիրել զամբյուղից",
+      customType: "Ստեղծել սեփական պատվեր",
+      emptyCartMessage: "Ձեր զամբյուղը դատարկ է: Խնդրում ենք ավելացնել ապրանքներ կամ ընտրել 'Ստեղծել սեփական պատվեր'.", 
       firstName: "Անուն", 
       lastName: "Ազգանուն", 
       phone: "Հեռախոս", 
@@ -450,7 +482,8 @@ export const translations = {
       budgetRangePlaceholder: "օր. 150-200",
       notes: "Նշումներ", 
       notesPlaceholder: "Ցանկացած հատուկ հարցում կամ մանրամաս...",
-      placeOrder: "Տեղադրել պատվեր", 
+      placeOrder: "Տեղադրել պատվեր",
+      reviewOrder: "Վերանայել պատվերը",
       submitting: "Ուղարկվում է...", 
       success: "Շնորհակալություն: Մենք շուտով կզանգենք հաստատելու համար:", 
       error: "Ինչ-որ բան սխալ է: Խնդրում ենք կրկին փորձել:", 
@@ -462,6 +495,14 @@ export const translations = {
       successMessage: "Շնորհակալություն! Մենք շուտով ձեզ կզանգենք հաստատելու համար:",
       errorMessage: "Ինչ-որ բան սխալ է եղել: Խնդրում ենք կրկին փորձել:",
       customOrderRequest: "Պատվերի հարցում"
+    },
+    orderReview: {
+      title: "Վերանայեք ձեր պատվերը",
+      subtitle: "Խնդրում ենք վերանայել պատվերի մանրամասները հաստատելուց առաջ",
+      itemsTitle: "Պատվերի ապրանքներ",
+      customerInfo: "Հաճախորդի տեղեկատվություն",
+      back: "Վերադառնալ ձևին",
+      confirmOrder: "Հաստատել պատվերը"
     },
     products: { addToCart: "Ավելացնել զամբյուղ", info: "Տեղեկություն", hideInfo: "Թաքցնել տեղեկությունը" },
     common: {
@@ -480,6 +521,7 @@ export const translations = {
     },
     categories: {
       drinks: "Սուրճ, լիմոնադներ, թեյ, միլքշեյքներ և թարմ հյութեր - բոլոր ձեր սիրելի խմիչքները մի տեղում:",
+      "baked-goods": "Թարմ հրուշակեղեն, տորթեր, մուսեր և քաղցրավենիք, որոնք թխվում են ամեն օր:",
       cake: "Սեզոնային տորթեր, ավարտված բուսաբանական և արհեստական շոկոլադով:",
       "wedding-cakes": "Պատվերով պատրաստված ցուցանմուշներ, որոնք հարմարեցված են ձեր տոնակատարությանը:",
       "tama-products": "Ձեռագործ Տամայի քաղցրավենիք, փաթաթված նվերի կամ միջոցառումների համար:"
@@ -598,6 +640,7 @@ export const translations = {
       custom: "Заказ",
       tama: "Продукты Тама",
       drinks: "Напитки",
+      bakedGoods: "Выпечка",
       cakeTama: "Торты и сладости",
       weddingCakes: "Свадебные торты",
       createOrder: "Создайте свой заказ",
@@ -624,7 +667,10 @@ export const translations = {
     },
     order: { 
       title: "Детали заказа", 
-      subtitle: "Расскажите нам о размере торта, бюджете и любом вдохновении. Мы подтвердим все по телефону перед оплатой.", 
+      subtitle: "Расскажите нам о размере торта, бюджете и любом вдохновении. Мы подтвердим все по телефону перед оплатой.",
+      checkoutType: "Оформить заказ из корзины",
+      customType: "Создать свой заказ",
+      emptyCartMessage: "Ваша корзина пуста. Пожалуйста, добавьте товары в корзину или выберите 'Создать свой заказ'.", 
       firstName: "Имя", 
       lastName: "Фамилия", 
       phone: "Телефон", 
@@ -642,7 +688,8 @@ export const translations = {
       budgetRangePlaceholder: "напр., 150-200",
       notes: "Примечания", 
       notesPlaceholder: "Любые особые пожелания или детали...",
-      placeOrder: "Оформить заказ", 
+      placeOrder: "Оформить заказ",
+      reviewOrder: "Проверить заказ",
       submitting: "Отправляется...", 
       success: "Спасибо! Мы скоро перезвоним для подтверждения.", 
       error: "Что-то пошло не так. Пожалуйста, попробуйте снова.", 
@@ -654,6 +701,14 @@ export const translations = {
       successMessage: "Спасибо! Мы скоро вам позвоним для подтверждения.",
       errorMessage: "Что-то пошло не так. Пожалуйста, попробуйте снова.",
       customOrderRequest: "Запрос на заказ"
+    },
+    orderReview: {
+      title: "Проверьте ваш заказ",
+      subtitle: "Пожалуйста, проверьте детали заказа перед подтверждением",
+      itemsTitle: "Товары в заказе",
+      customerInfo: "Информация о клиенте",
+      back: "Вернуться к форме",
+      confirmOrder: "Подтвердить заказ"
     },
     products: { addToCart: "Добавить в корзину", info: "Информация", hideInfo: "Скрыть информацию" },
     common: {
@@ -672,6 +727,7 @@ export const translations = {
     },
     categories: {
       drinks: "Кофе, лимонады, чай, милкшейки и свежие соки - все ваши любимые напитки в одном месте.",
+      "baked-goods": "Свежая выпечка, тарты, муссы и сладости, выпекаемые ежедневно.",
       cake: "Сезонные торты, украшенные ботаническими и артистическими шоколадными изделиями.",
       "wedding-cakes": "Изготовленные на заказ экспонаты, адаптированные для вашего празднования.",
       "tama-products": "Ручные сладости Тама, упакованные для подарков или мероприятий."

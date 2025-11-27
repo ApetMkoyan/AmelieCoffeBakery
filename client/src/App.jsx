@@ -294,13 +294,14 @@ function App() {
     try {
       await apiPatch(`/orders/${orderId}`, { status }, supervisorToken);
       await fetchOrders();
+      setOrdersState((prev) => ({ ...prev, error: "" }));
       return true;
     } catch (error) {
       console.error("Error updating order:", error);
-      setOrdersState((prev) => ({
-        ...prev,
-        error: t("supervisor.errors.updateOrder"),
-      }));
+      const errorMessage = error.message?.includes("expired") || error.message?.includes("Unauthorized")
+        ? "Session expired. Please log in again."
+        : error.message || t("supervisor.errors.updateOrder");
+      setOrdersState((prev) => ({ ...prev, error: errorMessage }));
       return false;
     }
   };
@@ -327,7 +328,10 @@ function App() {
   };
 
   const scrollToOrderForm = () => {
-    scrollToElementById("custom-order", 140);
+    // Use setTimeout to ensure the element is rendered
+    setTimeout(() => {
+      scrollToElementById("custom-order", 140);
+    }, 100);
   };
 
   // Navigation handler

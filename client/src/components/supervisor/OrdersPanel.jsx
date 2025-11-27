@@ -33,7 +33,17 @@ function OrdersPanel({ orders, state, onUpdateOrderStatus, onDeleteOrder }) {
         </div>
       </div>
 
-      {state.error && <p className="form-status error">{state.error}</p>}
+      {state.error && (
+        <div className="form-status error" style={{ 
+          padding: "1rem", 
+          borderRadius: "12px", 
+          background: "rgba(192, 57, 43, 0.1)",
+          border: "1px solid rgba(192, 57, 43, 0.3)",
+          marginBottom: "1rem"
+        }}>
+          <strong>Error:</strong> {state.error}
+        </div>
+      )}
 
       <OrdersCalendar
         orders={orders}

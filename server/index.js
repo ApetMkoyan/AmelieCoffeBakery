@@ -28,6 +28,7 @@ app.use(morgan("dev"));
 const PRODUCTS_FILE = "products.json";
 const ORDERS_FILE = "orders.json";
 const CONSUMABLES_FILE = "consumables.json";
+const DAILY_RECORDS_FILE = "daily-records.json";
 const SUPERVISOR_PASSCODE =
   process.env.SUPERVISOR_PASSCODE || "Amelie123";
 const activeSessions = new Map();
@@ -288,10 +289,16 @@ app.patch(
     try {
       const { orderId } = req.params;
       const { status, eventDate } = req.body || {};
-      if (!status && !eventDate) {
-        return res
-          .status(400)
-          .json({ error: "Status or event date is required to update" });
+      
+      if (status === undefined && !eventDate) {
+        return res.status(400).json({ error: "Status or event date is required to update" });
+      }
+
+      if (status !== undefined) {
+        const validStatuses = ["pending", "confirmed", "completed"];
+        if (!validStatuses.includes(status)) {
+          return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` });
+        }
       }
 
       const orders = await readJson(ORDERS_FILE, []);
@@ -300,7 +307,7 @@ app.patch(
         return res.status(404).json({ error: "Order not found" });
       }
 
-      if (status) {
+      if (status !== undefined) {
         orders[index].status = status;
       }
       if (eventDate) {

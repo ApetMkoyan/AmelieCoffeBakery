@@ -5,6 +5,7 @@ import { scrollToElementById } from "../../utils/scroll.js";
 
 const sections = [
   { id: "drinks", labelKey: "menu.drinks" },
+  { id: "baked-goods", labelKey: "menu.bakedGoods" },
   { id: "cake", labelKey: "menu.cakeTama" },
   { id: "wedding-cakes", labelKey: "menu.weddingCakes" },
   { id: "custom-order", labelKey: "menu.createOrder" },
@@ -21,7 +22,10 @@ function MenuAccordion({
   const handleSummaryClick = (sectionId, e) => {
     if (sectionId === "custom-order") {
       e.preventDefault();
-      scrollToElementById("custom-order", 140);
+      // Use setTimeout to ensure smooth scroll after details opens
+      setTimeout(() => {
+        scrollToElementById("custom-order", 140);
+      }, 100);
     }
   };
 

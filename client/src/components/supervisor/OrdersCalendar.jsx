@@ -94,9 +94,14 @@ const sortedDates = Object.keys(grouped).sort((a, b) => {
                 <td>
                   <select
                     value={order.status || "pending"}
-                    onChange={(event) =>
-                      onUpdateStatus(order.id, event.target.value)
-                    }
+                    onChange={async (event) => {
+                      const newStatus = event.target.value;
+                      const success = await onUpdateStatus(order.id, newStatus);
+                      if (!success) {
+                        // Revert select value on error
+                        event.target.value = order.status || "pending";
+                      }
+                    }}
                   >
                     {statuses.map((status) => (
                       <option key={status.value} value={status.value}>

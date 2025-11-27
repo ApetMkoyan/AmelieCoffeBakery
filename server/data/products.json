@@ -211,6 +211,106 @@
       "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80"
     }
   ],
+  "baked-goods": [
+    {
+      "id": "baked-brown-caramel",
+      "name": "Brown Caramel",
+      "price": 9,
+      "description": "Rich brown caramel dessert with creamy texture.",
+      "image": "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-citrus-tart",
+      "name": "Citrus Tart",
+      "price": 4,
+      "description": "Fresh citrus tart with zesty lemon and orange flavors.",
+      "image": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-macarons",
+      "name": "Macarons",
+      "price": 3,
+      "description": "Delicate French macarons in assorted flavors.",
+      "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-esterhazy",
+      "name": "Esterházy",
+      "price": 7,
+      "description": "Classic Hungarian Esterházy torte with almond layers and buttercream.",
+      "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-coconut-mousse",
+      "name": "Coconut Mousse",
+      "price": 5.5,
+      "description": "Light and airy coconut mousse with tropical flavors.",
+      "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-mango-mousse",
+      "name": "Mango Mousse",
+      "price": 6,
+      "description": "Creamy mango mousse with fresh tropical taste.",
+      "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-red-velvet",
+      "name": "Red Velvet",
+      "price": 5.5,
+      "description": "Classic red velvet cake with cream cheese frosting.",
+      "image": "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-opera",
+      "name": "Opera",
+      "price": 7.5,
+      "description": "Elegant French Opera cake with coffee and chocolate layers.",
+      "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-chocolate-mousse",
+      "name": "Chocolate Mousse",
+      "price": 5,
+      "description": "Rich and smooth chocolate mousse dessert.",
+      "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-tiramisu",
+      "name": "Tiramisu",
+      "price": 7,
+      "description": "Classic Italian tiramisu with coffee and mascarpone.",
+      "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-cherry-mousse",
+      "name": "Cherry Mousse",
+      "price": 8,
+      "description": "Delicate cherry mousse with fresh fruit flavor.",
+      "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-orange-cake",
+      "name": "Orange Cake",
+      "price": 6,
+      "description": "Moist orange cake with citrus glaze.",
+      "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-pistachio",
+      "name": "Pistachio",
+      "price": 7.5,
+      "description": "Delicious pistachio dessert with nutty flavor.",
+      "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "baked-chocolate-brownie",
+      "name": "Chocolate Brownie",
+      "price": 8,
+      "description": "Rich and fudgy chocolate brownie.",
+      "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
   "cake": [],
   "wedding-cakes": [],
   "tama-products": []

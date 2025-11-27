@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
 
 const blankProduct = {
-  category: "coffee",
+  category: "drinks",
   name: "",
   price: "",
   description: "",
@@ -13,7 +13,8 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
   const { t } = useLanguage();
   
   const categories = [
-    { value: "coffee", labelKey: "menu.coffee" },
+    { value: "drinks", labelKey: "menu.drinks" },
+    { value: "baked-goods", labelKey: "menu.bakedGoods" },
     { value: "cake", labelKey: "menu.cake" },
     { value: "wedding-cakes", labelKey: "menu.wedding" },
     { value: "tama-products", labelKey: "menu.tama" },
@@ -21,7 +22,7 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
   const [form, setForm] = useState(blankProduct);
   const [editingId, setEditingId] = useState(null);
   const [status, setStatus] = useState({ type: "idle", message: "" });
-  const [activeCategory, setActiveCategory] = useState("coffee");
+  const [activeCategory, setActiveCategory] = useState("drinks");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -177,7 +178,7 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
                 handleCancel();
               }}
             >
-              {cat.label}
+              {t(cat.labelKey)}
             </button>
           ))}
         </div>

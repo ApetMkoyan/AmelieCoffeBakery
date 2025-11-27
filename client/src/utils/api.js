@@ -1,15 +1,5 @@
-/**
- * API utility functions
- */
-
 const API_BASE = "/api";
 
-/**
- * Makes an API request with error handling
- * @param {string} endpoint - API endpoint
- * @param {object} options - Fetch options
- * @returns {Promise<Response>}
- */
 export async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
   const response = await fetch(url, {
@@ -25,24 +15,27 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.statusText}`);
+    let errorMessage = response.statusText;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch (e) {
+      // not JSON
+    }
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
   }
 
   return response;
 }
 
-/**
- * GET request helper
- */
 export async function apiGet(endpoint, token = null) {
   const headers = token ? { "x-supervisor-token": token } : {};
   const response = await apiRequest(endpoint, { headers });
   return response.json();
 }
 
-/**
- * POST request helper
- */
 export async function apiPost(endpoint, data, token = null) {
   const headers = token ? { "x-supervisor-token": token } : {};
   const response = await apiRequest(endpoint, {
@@ -53,9 +46,6 @@ export async function apiPost(endpoint, data, token = null) {
   return response.json();
 }
 
-/**
- * PATCH request helper
- */
 export async function apiPatch(endpoint, data, token = null) {
   const headers = token ? { "x-supervisor-token": token } : {};
   const response = await apiRequest(endpoint, {
@@ -66,9 +56,6 @@ export async function apiPatch(endpoint, data, token = null) {
   return response.json();
 }
 
-/**
- * DELETE request helper
- */
 export async function apiDelete(endpoint, token = null) {
   const headers = token ? { "x-supervisor-token": token } : {};
   const response = await apiRequest(endpoint, {

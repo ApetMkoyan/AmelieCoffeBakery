@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import OrderReview from "./OrderReview.jsx";
 
 const initialForm = {
   firstName: "",
@@ -14,9 +15,19 @@ const initialForm = {
   notes: "",
 };
 
-function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
+function CheckoutForm({ cartItems, status, onSubmit }) {
   const { t } = useLanguage();
   const [form, setForm] = useState(initialForm);
+  const [showReview, setShowReview] = useState(false);
+  const [orderType, setOrderType] = useState(cartItems.length > 0 ? "checkout" : "custom");
+  
+  // Auto-switch to custom if cart becomes empty
+  useEffect(() => {
+    if (cartItems.length === 0 && orderType === "checkout") {
+      setOrderType("custom");
+    }
+  }, [cartItems.length, orderType]);
+  
   const cartTotal = useMemo(
     () =>
       cartItems.reduce(
@@ -33,6 +44,11 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // Show review page instead of submitting directly
+    setShowReview(true);
+  };
+
+  const handleConfirmOrder = async () => {
     if (!onSubmit) {
       console.error("onSubmit handler is missing");
       return;
@@ -41,22 +57,65 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
       const success = await onSubmit(form);
       if (success) {
         setForm(initialForm);
+        setShowReview(false);
       }
     } catch (error) {
       console.error("Form submission error:", error);
     }
   };
 
+  const handleBackToForm = () => {
+    setShowReview(false);
+  };
+
+  // Show review page if form is submitted
+  if (showReview) {
+    return (
+      <OrderReview
+        orderData={form}
+        cartItems={cartItems}
+        onConfirm={handleConfirmOrder}
+        onBack={handleBackToForm}
+        status={status}
+      />
+    );
+  }
+
   return (
     <form className="card checkout-form" onSubmit={handleSubmit}>
       <header>
         <h3>{t("order.title")}</h3>
         <p>
-          {cartItems.length
+          {orderType === "checkout" && cartItems.length
             ? `${t("cart.total")}: ₾${cartTotal.toFixed(2)}`
+            : orderType === "custom"
+            ? t("order.customOrderSubtitle")
             : t("cart.empty")}
         </p>
       </header>
+
+      {/* Order Type Selector */}
+      <div className="order-type-selector">
+        <button
+          type="button"
+          className={`order-type-btn ${orderType === "checkout" ? "active" : ""}`}
+          onClick={() => setOrderType("checkout")}
+          disabled={cartItems.length === 0}
+        >
+          {t("order.checkoutType")}
+        </button>
+        <button
+          type="button"
+          className={`order-type-btn ${orderType === "custom" ? "active" : ""}`}
+          onClick={() => setOrderType("custom")}
+        >
+          {t("order.customType")}
+        </button>
+      </div>
+
+      {orderType === "checkout" && cartItems.length === 0 && (
+        <p className="form-status error">{t("order.emptyCartMessage")}</p>
+      )}
 
       <div className="form-grid">
         <label>
@@ -135,7 +194,8 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
         </label>
       </div>
 
-      {showCustomFields && (
+      {/* Custom Order Fields - only for custom orders */}
+      {orderType === "custom" && (
         <>
           <label>
             {t("order.cakeSize")}
@@ -145,7 +205,7 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
               value={form.cakeSize}
               onChange={handleChange}
               placeholder={t("order.cakeSizePlaceholder")}
-              required={showCustomFields}
+              required={orderType === "custom"}
             />
           </label>
           <label>
@@ -156,13 +216,14 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
               value={form.budgetRange}
               onChange={handleChange}
               placeholder={t("order.budgetRangePlaceholder")}
-              required={showCustomFields}
+              required={orderType === "custom"}
             />
           </label>
         </>
       )}
 
-      {(showCustomFields || form.paymentMethod === "card") && (
+      {/* Payment Note - only for custom orders or card payment */}
+      {(orderType === "custom" || form.paymentMethod === "card") && (
         <p className="payment-note">
           {t("order.paymentNote")}
         </p>
@@ -182,9 +243,9 @@ function CheckoutForm({ cartItems, status, onSubmit, showCustomFields }) {
       <button
         type="submit"
         className="btn primary full-width"
-        disabled={status.type === "loading"}
+        disabled={status.type === "loading" || (orderType === "checkout" && cartItems.length === 0)}
       >
-        {status.type === "loading" ? t("order.submitting") : t("order.placeOrder")}
+        {t("order.reviewOrder")}
       </button>
 
       {status.message && (

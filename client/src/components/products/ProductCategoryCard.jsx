@@ -12,6 +12,7 @@ function ProductCategoryCard({ category, description, items, onAddToCart }) {
   
   const categoryLabels = {
     coffee: "menu.coffee",
+    "baked-goods": "menu.bakedGoods",
     cake: "menu.cake",
     "wedding-cakes": "menu.wedding",
     "tama-products": "menu.tama",
@@ -42,7 +43,6 @@ function ProductCardEntry({ item, onAddToCart }) {
   const [showInfo, setShowInfo] = useState(false);
   const cardRef = useRef(null);
 
-  // Close description when clicking outside
   useEffect(() => {
     if (!showInfo) return;
 

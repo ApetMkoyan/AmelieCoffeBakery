@@ -37,6 +37,7 @@ function GuestView({
 
     const descriptions = {
       drinks: t("categories.drinks"),
+      "baked-goods": t("categories.baked-goods"),
       cake: t("categories.cake"),
       "wedding-cakes": t("categories.wedding-cakes"),
       "tama-products": t("categories.tama-products"),
@@ -99,6 +100,18 @@ function GuestView({
           )}
         </section>
 
+        <section id="custom-order" className="section order-section">
+          <SectionHeading
+            title={t("order.title")}
+            subtitle={t("order.subtitle")}
+          />
+          <CheckoutForm
+            cartItems={cartItems}
+            status={orderStatus}
+            onSubmit={onOrderSubmit}
+          />
+        </section>
+
         <section id="cart" className="section cart-section">
           <SectionHeading
             title={t("cart.title")}
@@ -110,19 +123,6 @@ function GuestView({
             onDecrement={(id) => updateCartQuantity(id, -1)}
             onRemove={removeFromCart}
             onOrderClick={scrollToOrderForm}
-          />
-        </section>
-
-        <section id="custom-order" className="section order-section">
-          <SectionHeading
-            title={t("order.title")}
-            subtitle={t("order.subtitle")}
-          />
-          <CheckoutForm
-            cartItems={cartItems}
-            status={orderStatus}
-            onSubmit={onOrderSubmit}
-            showCustomFields
           />
         </section>
       </main>

@@ -1,4 +1,5 @@
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { scrollToElementById } from "../utils/scroll.js";
 
 const BUSINESS_NAME = "Amelie Coffee & Bakery";
 
@@ -14,7 +15,14 @@ function Hero() {
           <a className="btn primary" href="#menu">
             {t("hero.browseMenu")}
           </a>
-          <a className="btn ghost" href="#custom-order">
+          <a 
+            className="btn ghost" 
+            href="#custom-order"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToElementById("custom-order", 140);
+            }}
+          >
             {t("hero.customOrder")}
           </a>
         </div>
