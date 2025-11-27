@@ -50,9 +50,95 @@ const SUPERVISOR_PASSCODE =
   process.env.SUPERVISOR_PASSCODE || "Amelie123";
 const activeSessions = new Map();
 
+// Migrate data from JSON files to MongoDB if MongoDB is empty
+const migrateDataToMongo = async () => {
+  if (!USE_MONGODB) return;
+  
+  try {
+    const { getCollection } = await import("./utils/db.js");
+    const fileStorage = await import("./utils/storage.js");
+    
+    // Check if products collection is empty
+    const productsCollection = getCollection("products");
+    const productsCount = await productsCollection.countDocuments();
+    
+    if (productsCount === 0) {
+      console.log("📦 Migrating products from JSON to MongoDB...");
+      try {
+        // Read from JSON file
+        const productsData = await fileStorage.readJson(PRODUCTS_FILE, {});
+        // Only migrate if we got actual data (not empty object)
+        if (productsData && Object.keys(productsData).length > 0) {
+          await writeJson(PRODUCTS_FILE, productsData);
+          console.log("✅ Products migrated successfully");
+        } else {
+          console.log("⚠️ Products JSON file is empty, skipping migration");
+        }
+      } catch (error) {
+        console.log("⚠️ Products JSON file not found or error reading:", error.message);
+      }
+    }
+    
+    // Check if orders collection is empty
+    const ordersCollection = getCollection("orders");
+    const ordersCount = await ordersCollection.countDocuments();
+    
+    if (ordersCount === 0) {
+      console.log("📦 Migrating orders from JSON to MongoDB...");
+      try {
+        const ordersData = await fileStorage.readJson(ORDERS_FILE, []);
+        if (Array.isArray(ordersData) && ordersData.length > 0) {
+          await writeJson(ORDERS_FILE, ordersData);
+          console.log("✅ Orders migrated successfully");
+        }
+      } catch (error) {
+        console.log("⚠️ Orders JSON file not found or error reading:", error.message);
+      }
+    }
+    
+    // Check if consumables collection is empty
+    const consumablesCollection = getCollection("consumables");
+    const consumablesCount = await consumablesCollection.countDocuments();
+    
+    if (consumablesCount === 0) {
+      console.log("📦 Migrating consumables from JSON to MongoDB...");
+      try {
+        const consumablesData = await fileStorage.readJson(CONSUMABLES_FILE, []);
+        if (Array.isArray(consumablesData) && consumablesData.length > 0) {
+          await writeJson(CONSUMABLES_FILE, consumablesData);
+          console.log("✅ Consumables migrated successfully");
+        }
+      } catch (error) {
+        console.log("⚠️ Consumables JSON file not found or error reading:", error.message);
+      }
+    }
+    
+    // Check if daily-records collection is empty
+    const dailyRecordsCollection = getCollection("daily-records");
+    const dailyRecordsCount = await dailyRecordsCollection.countDocuments();
+    
+    if (dailyRecordsCount === 0) {
+      console.log("📦 Migrating daily-records from JSON to MongoDB...");
+      try {
+        const dailyRecordsData = await fileStorage.readJson(DAILY_RECORDS_FILE, []);
+        if (Array.isArray(dailyRecordsData) && dailyRecordsData.length > 0) {
+          await writeJson(DAILY_RECORDS_FILE, dailyRecordsData);
+          console.log("✅ Daily records migrated successfully");
+        }
+      } catch (error) {
+        console.log("⚠️ Daily records JSON file not found or error reading:", error.message);
+      }
+    }
+  } catch (error) {
+    console.error("⚠️ Migration error:", error.message);
+  }
+};
+
 const ensureDefaults = async () => {
   if (USE_MONGODB) {
     await connectDB();
+    // Migrate data from JSON files to MongoDB if collections are empty
+    await migrateDataToMongo();
   }
   await readJson(PRODUCTS_FILE, {});
   await readJson(ORDERS_FILE, []);
@@ -462,6 +548,83 @@ app.delete(
     }
   }
 );
+
+// Manual migration endpoint (for supervisor use)
+app.post("/api/migrate-data", authenticateSupervisor, async (req, res, next) => {
+  if (!USE_MONGODB) {
+    return res.status(400).json({ error: "MongoDB is not configured" });
+  }
+  
+  try {
+    const { getCollection } = await import("./utils/db.js");
+    const fileStorage = await import("./utils/storage.js");
+    const results = { migrated: [], skipped: [], errors: [] };
+    
+    // Migrate products
+    try {
+      const productsCollection = getCollection("products");
+      const productsCount = await productsCollection.countDocuments();
+      if (productsCount === 0) {
+        const productsData = await fileStorage.readJson(PRODUCTS_FILE, {});
+        if (productsData && Object.keys(productsData).length > 0) {
+          await writeJson(PRODUCTS_FILE, productsData);
+          results.migrated.push("products");
+        } else {
+          results.skipped.push("products (empty)");
+        }
+      } else {
+        results.skipped.push("products (already has data)");
+      }
+    } catch (error) {
+      results.errors.push(`products: ${error.message}`);
+    }
+    
+    // Migrate orders
+    try {
+      const ordersCollection = getCollection("orders");
+      const ordersCount = await ordersCollection.countDocuments();
+      if (ordersCount === 0) {
+        const ordersData = await fileStorage.readJson(ORDERS_FILE, []);
+        if (Array.isArray(ordersData) && ordersData.length > 0) {
+          await writeJson(ORDERS_FILE, ordersData);
+          results.migrated.push("orders");
+        } else {
+          results.skipped.push("orders (empty)");
+        }
+      } else {
+        results.skipped.push("orders (already has data)");
+      }
+    } catch (error) {
+      results.errors.push(`orders: ${error.message}`);
+    }
+    
+    // Migrate consumables
+    try {
+      const consumablesCollection = getCollection("consumables");
+      const consumablesCount = await consumablesCollection.countDocuments();
+      if (consumablesCount === 0) {
+        const consumablesData = await fileStorage.readJson(CONSUMABLES_FILE, []);
+        if (Array.isArray(consumablesData) && consumablesData.length > 0) {
+          await writeJson(CONSUMABLES_FILE, consumablesData);
+          results.migrated.push("consumables");
+        } else {
+          results.skipped.push("consumables (empty)");
+        }
+      } else {
+        results.skipped.push("consumables (already has data)");
+      }
+    } catch (error) {
+      results.errors.push(`consumables: ${error.message}`);
+    }
+    
+    res.json({
+      message: "Migration completed",
+      results
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.use(express.static(clientDir));
 
