@@ -1113,6 +1113,26 @@ textarea {
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(199, 107, 92, 0.3) transparent;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(199, 107, 92, 0.3);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(199, 107, 92, 0.5);
 }
 
 table {
@@ -1664,6 +1684,26 @@ tfoot td {
 
 .expenses-report__table {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(199, 107, 92, 0.3) transparent;
+}
+
+.expenses-report__table::-webkit-scrollbar {
+  height: 8px;
+}
+
+.expenses-report__table::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.expenses-report__table::-webkit-scrollbar-thumb {
+  background: rgba(199, 107, 92, 0.3);
+  border-radius: 4px;
+}
+
+.expenses-report__table::-webkit-scrollbar-thumb:hover {
+  background: rgba(199, 107, 92, 0.5);
 }
 
 .expenses-report__table table {
@@ -2438,33 +2478,74 @@ tfoot td {
     padding: 1rem;
   }
 
+  .supervisor-dashboard {
+    gap: 1rem;
+  }
+
+  .supervisor-page {
+    padding-top: 1.5rem;
+  }
+
   .supervisor-info {
     padding: 1rem 1.25rem;
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .supervisor-info button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .supervisor-panels {
+    gap: 1rem;
+  }
+
+  .supervisor-panels details {
+    margin-bottom: 1rem;
+    border-radius: 16px;
   }
 
   .supervisor-panels summary {
     padding: 1rem 1.25rem;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
   .panel-content {
-    padding: 1.25rem;
+    padding: 1rem;
+    gap: 1.5rem;
   }
 
+  /* Product Manager Mobile */
   .product-manager {
     gap: 1.5rem;
   }
 
   .product-manager__form form {
-    padding: 1.5rem;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .product-manager__form input,
+  .product-manager__form textarea,
+  .product-manager__form select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
+    padding: 0.75rem;
   }
 
   .product-gallery {
     grid-template-columns: 1fr;
     gap: 1rem;
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.5rem;
   }
 
   .product-gallery__item {
@@ -2473,11 +2554,150 @@ tfoot td {
 
   .product-manager__tabs {
     gap: 0.5rem;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
   }
 
   .tab {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Consumable Form Mobile */
+  .consumable-form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .consumable-form label {
+    font-size: 0.9rem;
+  }
+
+  .consumable-form input,
+  .consumable-form select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
+    padding: 0.75rem;
+  }
+
+  .consumable-form__date {
     font-size: 0.85rem;
+    padding: 0.75rem;
+    background: rgba(199, 107, 92, 0.05);
+    border-radius: 8px;
+  }
+
+  .consumable-form button {
+    width: 100%;
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
+  /* Expenses Report Mobile */
+  .expenses-report {
+    margin-top: 1rem;
+  }
+
+  .expenses-report__controls {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .period-selector {
+    gap: 0.75rem;
+  }
+
+  .period-buttons {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .period-buttons button {
+    flex: 1;
+    min-width: calc(50% - 0.25rem);
+    min-height: 44px;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .date-range {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .date-range input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: 44px;
+  }
+
+  .expenses-report__summary {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-card {
+    padding: 1rem;
+  }
+
+  .summary-card h4 {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-value {
+    font-size: 1.5rem;
+  }
+
+  /* Table Mobile - Make scrollable */
+  .expenses-report__table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  table {
+    min-width: 600px; /* Minimum width for table */
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .table-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .table-actions .link-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    min-height: 36px;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* Orders Panel Mobile */
+  .orders-panel {
+    gap: 1rem;
   }
 
   .orders-panel__metrics {
@@ -2487,23 +2707,56 @@ tfoot td {
 
   .orders-chip {
     padding: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .orders-chip p {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   .orders-chip strong {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .calendar-table {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
+    min-width: 500px;
   }
 
   .calendar-table th,
   .calendar-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.5rem 0.25rem;
   }
 
-  .expenses-report__summary {
-    grid-template-columns: 1fr;
+  /* Form Status Mobile */
+  .form-status {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  /* Product Actions Mobile */
+  .product-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .product-actions .link-button {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
+
+  /* Form Actions Mobile */
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-actions button {
+    width: 100%;
+    min-height: 44px;
   }
 }
 
