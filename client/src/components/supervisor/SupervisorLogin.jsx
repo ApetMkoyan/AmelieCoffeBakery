@@ -43,7 +43,6 @@ function SupervisorLogin({ onLogin }) {
         <input
           type="text"
           name="email"
-          placeholder="Amelie123"
           value={form.email}
           onChange={handleChange}
           autoComplete="username"
@@ -58,7 +57,6 @@ function SupervisorLogin({ onLogin }) {
         <input
           type="password"
           name="passcode"
-          placeholder="9512357*"
           value={form.passcode}
           onChange={handleChange}
           autoComplete="current-password"

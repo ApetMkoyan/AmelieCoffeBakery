@@ -46,10 +46,20 @@ const PRODUCTS_FILE = "products.json";
 const ORDERS_FILE = "orders.json";
 const CONSUMABLES_FILE = "consumables.json";
 const DAILY_RECORDS_FILE = "daily-records.json";
-const SUPERVISOR_LOGIN = process.env.SUPERVISOR_LOGIN || "Amelie123";
-const SUPERVISOR_PASSCODE =
-  process.env.SUPERVISOR_PASSCODE || "9512357*";
+// Supervisor credentials - DO NOT CHANGE without updating Vercel environment variables
+const SUPERVISOR_LOGIN = (process.env.SUPERVISOR_LOGIN || "Amelie123").trim();
+const SUPERVISOR_PASSCODE = (process.env.SUPERVISOR_PASSCODE || "9512357*").trim();
 const activeSessions = new Map();
+
+// Log credentials on startup (for debugging - remove in production)
+console.log("🔐 Supervisor credentials initialized:", {
+  login: SUPERVISOR_LOGIN,
+  passcode: SUPERVISOR_PASSCODE ? "***" : "empty",
+  fromEnv: {
+    login: !!process.env.SUPERVISOR_LOGIN,
+    passcode: !!process.env.SUPERVISOR_PASSCODE
+  }
+});
 
 // Migrate data from JSON files to MongoDB if MongoDB is empty
 const migrateDataToMongo = async () => {
@@ -223,29 +233,39 @@ app.post("/api/supervisor/login", (req, res) => {
     return res.status(400).json({ error: "Email and passcode are required" });
   }
   
-  const trimmedEmail = email.trim();
-  const trimmedPasscode = passcode.trim();
+  // Trim and normalize inputs
+  const trimmedEmail = String(email).trim();
+  const trimmedPasscode = String(passcode).trim();
   
-  // Debug logging (remove in production if needed)
-  console.log("Login attempt:", {
+  // Debug logging
+  console.log("🔐 Login attempt:", {
     receivedEmail: trimmedEmail,
-    receivedPasscode: trimmedPasscode ? "***" : "empty",
+    receivedEmailLength: trimmedEmail.length,
+    receivedPasscodeLength: trimmedPasscode.length,
     expectedLogin: SUPERVISOR_LOGIN,
-    expectedPasscode: SUPERVISOR_PASSCODE ? "***" : "empty",
+    expectedLoginLength: SUPERVISOR_LOGIN.length,
+    expectedPasscodeLength: SUPERVISOR_PASSCODE.length,
     emailMatch: trimmedEmail === SUPERVISOR_LOGIN,
-    passcodeMatch: trimmedPasscode === SUPERVISOR_PASSCODE
+    passcodeMatch: trimmedPasscode === SUPERVISOR_PASSCODE,
+    emailExactMatch: JSON.stringify(trimmedEmail) === JSON.stringify(SUPERVISOR_LOGIN),
+    passcodeExactMatch: JSON.stringify(trimmedPasscode) === JSON.stringify(SUPERVISOR_PASSCODE)
   });
   
+  // Strict comparison
   if (trimmedEmail !== SUPERVISOR_LOGIN) {
     console.log("❌ Login failed: Invalid email");
+    console.log("   Expected:", JSON.stringify(SUPERVISOR_LOGIN));
+    console.log("   Received:", JSON.stringify(trimmedEmail));
     return res.status(401).json({ error: "Invalid login" });
   }
   if (trimmedPasscode !== SUPERVISOR_PASSCODE) {
     console.log("❌ Login failed: Invalid password");
+    console.log("   Expected length:", SUPERVISOR_PASSCODE.length);
+    console.log("   Received length:", trimmedPasscode.length);
     return res.status(401).json({ error: "Invalid password" });
   }
   
-  console.log("✅ Login successful");
+  console.log("✅ Login successful for:", trimmedEmail);
   const token = nanoid();
   activeSessions.set(token, { email: trimmedEmail, signedInAt: new Date().toISOString() });
   res.json({ token, profile: { email: trimmedEmail } });
