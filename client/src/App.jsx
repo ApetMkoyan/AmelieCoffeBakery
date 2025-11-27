@@ -108,7 +108,8 @@ function App() {
     } catch (error) {
       console.error("Error fetching consumables:", error);
       setConsumableState({ loading: false, error: error.message });
-      if (error.message && (error.message.includes("expired") || error.message.includes("Unauthorized"))) {
+      // Only logout on explicit unauthorized errors, not on network issues
+      if (error.status === 401 || (error.message && error.message.includes("Unauthorized"))) {
         handleSupervisorLogout();
       }
     }
@@ -125,20 +126,72 @@ function App() {
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrdersState({ loading: false, error: error.message });
-      if (error.message && (error.message.includes("expired") || error.message.includes("Unauthorized"))) {
+      // Only logout on explicit unauthorized errors, not on network issues
+      if (error.status === 401 || (error.message && error.message.includes("Unauthorized"))) {
         handleSupervisorLogout();
       }
     }
   }, [handleSupervisorLogout, supervisorToken]);
 
-  // Load supervisor data when token is available
+  // Verify token and load data when token is available
   useEffect(() => {
-    fetchConsumables();
-  }, [fetchConsumables]);
-
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    if (!supervisorToken) return;
+    
+    let isMounted = true;
+    let hasVerified = false; // Prevent multiple verifications
+    
+    const verifyAndLoad = async () => {
+      if (hasVerified) return;
+      hasVerified = true;
+      
+      try {
+        // Use dedicated verify endpoint
+        const response = await fetch("/api/supervisor/verify", {
+          headers: {
+            "x-supervisor-token": supervisorToken,
+          },
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Token is invalid, logout
+            if (isMounted) {
+              handleSupervisorLogout();
+            }
+            return;
+          }
+          // Other errors - don't logout, might be temporary
+          console.warn("Token verification failed, but keeping session:", response.status);
+          return;
+        }
+        
+        const data = await response.json();
+        if (data.valid && data.profile && isMounted) {
+          setSupervisorProfile(data.profile);
+          // Load data after successful verification
+          fetchConsumables();
+          fetchOrders();
+        } else if (!data.valid && isMounted) {
+          handleSupervisorLogout();
+        }
+      } catch (error) {
+        console.error("Token verification error:", error);
+        // For network errors, don't logout - might be temporary
+        // Only logout on explicit unauthorized errors
+        if (error.message?.includes("Unauthorized") || error.message?.includes("Invalid")) {
+          if (isMounted) {
+            handleSupervisorLogout();
+          }
+        }
+      }
+    };
+    
+    verifyAndLoad();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [supervisorToken, handleSupervisorLogout, fetchConsumables, fetchOrders]);
 
   // Order submission
   const handleOrderSubmit = async (payload) => {

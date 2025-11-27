@@ -165,6 +165,26 @@ const authenticateSupervisor = (req, res, next) => {
   next();
 };
 
+// Endpoint to verify token without requiring data fetch
+app.get("/api/supervisor/verify", (req, res) => {
+  const token = req.header("x-supervisor-token");
+  console.log("🔍 Token verification request:", {
+    hasToken: !!token,
+    tokenLength: token?.length,
+    activeSessionsCount: activeSessions.size,
+    tokenExists: token ? activeSessions.has(token) : false
+  });
+  
+  if (!token || !activeSessions.has(token)) {
+    console.log("❌ Token verification failed - token not found in active sessions");
+    return res.status(401).json({ valid: false, error: "Invalid or expired token" });
+  }
+  
+  const session = activeSessions.get(token);
+  console.log("✅ Token verified successfully for:", session.email);
+  res.json({ valid: true, profile: { email: session.email } });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", uptime: process.uptime() });
 });
