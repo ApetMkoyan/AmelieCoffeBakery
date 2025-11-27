@@ -12,70 +12,70 @@
       "name": "Coconut Cappuccino",
       "price": 4,
       "description": "Espresso with coconut flavor and creamy foam. Available in 300ml (4₾) and 500ml (4.5₾).",
-      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-kinder-coffee",
       "name": "Kinder Coffee",
       "price": 5.9,
       "description": "Sweet Kinder-flavored coffee with chocolate notes. Available in 300ml (5.9₾) and 500ml (6.4₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-bounty-coffee",
       "name": "Bounty Coffee",
       "price": 6,
       "description": "Coconut and chocolate flavored coffee. Available in 300ml (6₾) and 500ml (6.6₾).",
-      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-nutella-coffee",
       "name": "Nutella Coffee",
       "price": 5.5,
       "description": "Rich hazelnut chocolate coffee. Available in 300ml (5.5₾) and 500ml (6₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-americano",
       "name": "Americano",
       "price": 4.5,
       "description": "Espresso with hot water. Available in 300ml (4.5₾) and 500ml (5₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-latte",
       "name": "Latte",
       "price": 6.5,
       "description": "Smooth espresso with steamed milk. Available in 300ml (6.5₾) and 500ml (7₾).",
-      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-coconut-latte",
       "name": "Coconut Latte",
       "price": 7,
       "description": "Latte with tropical coconut flavor. Available in 300ml (7₾) and 500ml (7.5₾).",
-      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-pistachio-latte",
       "name": "Pistachio Latte",
       "price": 7,
       "description": "Creamy latte with pistachio flavor. Available in 300ml (7₾) and 500ml (7.5₾).",
-      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-caramel-latte",
       "name": "Caramel Latte",
       "price": 7,
       "description": "Sweet caramel latte with smooth milk. Available in 300ml (7₾) and 500ml (7.5₾).",
-      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-bubble-coffee",
       "name": "Bubble Coffee",
       "price": 7,
       "description": "Coffee with tapioca pearls. Available in 300ml (7₾) and 500ml (7.5₾).",
-      "image": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=600&q=80"
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"
     },
     {
       "id": "drink-berry-mix",

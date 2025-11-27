@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import SizeSelectorModal from "./SizeSelectorModal.jsx";
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("ka-GE", {
@@ -96,9 +97,28 @@ function DrinksCategoryCard({ category, description, items, onAddToCart }) {
   );
 }
 
+// Helper function to get translated description
+const getTranslatedDescription = (item, t) => {
+  if (!item.id) return item.description || "";
+  const translationKey = `productDescriptions.${item.id}`;
+  const translated = t(translationKey);
+  // If translation exists (not the key itself), use it
+  if (translated && translated !== translationKey) {
+    return translated;
+  }
+  return item.description || "";
+};
+
+// Check if product has size options (300ml and 500ml)
+const hasSizeOptions = (item) => {
+  const desc = item.description || "";
+  return desc.includes("300ml") && desc.includes("500ml");
+};
+
 function ProductCardEntry({ item, onAddToCart }) {
   const { t } = useLanguage();
   const [showInfo, setShowInfo] = useState(false);
+  const [showSizeModal, setShowSizeModal] = useState(false);
   const cardRef = useRef(null);
 
   // Close description when clicking outside
@@ -115,9 +135,26 @@ function ProductCardEntry({ item, onAddToCart }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showInfo]);
 
+  const handleAddToCart = () => {
+    if (hasSizeOptions(item)) {
+      setShowSizeModal(true);
+    } else {
+      onAddToCart?.(item);
+    }
+  };
+
+  const translatedDescription = getTranslatedDescription(item, t);
+
   return (
     <>
       {showInfo && <div className="description-backdrop" onClick={() => setShowInfo(false)} />}
+      {showSizeModal && (
+        <SizeSelectorModal
+          product={item}
+          onSelect={onAddToCart}
+          onClose={() => setShowSizeModal(false)}
+        />
+      )}
       <div className={`product-card-entry ${showInfo ? "info-open" : ""}`} ref={cardRef}>
         {item.image && (
           <div className="product-image">
@@ -129,12 +166,12 @@ function ProductCardEntry({ item, onAddToCart }) {
             <h3>{item.name}</h3>
             <p className="price">{formatCurrency(item.price)}</p>
           </div>
-          {showInfo && <p className="description">{item.description}</p>}
+          {showInfo && <p className="description">{translatedDescription}</p>}
           <div className="product-card__actions">
             <button
               type="button"
               className="btn primary"
-              onClick={() => onAddToCart?.(item)}
+              onClick={handleAddToCart}
             >
               {t("products.addToCart")}
             </button>

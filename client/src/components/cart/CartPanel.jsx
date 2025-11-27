@@ -28,7 +28,10 @@ function CartPanel({ items, onIncrement, onDecrement, onRemove, onOrderClick }) 
                 <img src={item.image} alt={item.name} loading="lazy" />
               )}
               <div className="cart-item__details">
-                <p className="cart-item__title">{item.name}</p>
+                <p className="cart-item__title">
+                  {item.name}
+                  {item.size && <span className="cart-item__size"> ({item.size})</span>}
+                </p>
                 <p className="price">
                   {currency(item.price)} · Qty {item.quantity}
                 </p>

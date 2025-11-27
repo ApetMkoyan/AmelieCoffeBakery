@@ -23,6 +23,7 @@ function GuestView({
   onOrderSubmit,
   orderStatus,
   scrollToOrderForm,
+  forceOrderType,
 }) {
   const { t, language } = useLanguage();
 
@@ -109,6 +110,7 @@ function GuestView({
             cartItems={cartItems}
             status={orderStatus}
             onSubmit={onOrderSubmit}
+            forceOrderType={forceOrderType}
           />
         </section>
 

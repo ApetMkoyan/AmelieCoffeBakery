@@ -14,7 +14,11 @@ export function useCart() {
   const addToCart = useCallback(
     (product) => {
       setCartItems((prev) => {
-        const productId = product.id || product.name;
+        // Create unique ID that includes size if present
+        const baseId = product.id || product.name;
+        const productId = product.size ? `${baseId}-${product.size}` : baseId;
+        
+        // Check if exact same product (with same size) exists
         const existing = prev.find((item) => item.id === productId);
 
         if (existing) {
@@ -36,6 +40,7 @@ export function useCart() {
             price: Number(product.price),
             image: product.image || "",
             quantity: 1,
+            size: product.size || null,
           },
         ];
         setToastMessage(t("cart.addedToCart", { name: product.name }));

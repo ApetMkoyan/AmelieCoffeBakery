@@ -62,6 +62,9 @@ function App() {
     message: "",
   });
 
+  // Force order type when clicking "Order Now" in cart
+  const [forceOrderType, setForceOrderType] = useState(null);
+
   // Supervisor state
   const [supervisorToken, setSupervisorToken] = useState(loadSupervisorToken);
   const [supervisorProfile, setSupervisorProfile] = useState(() => {
@@ -328,9 +331,13 @@ function App() {
   };
 
   const scrollToOrderForm = () => {
+    // Force order type to "checkout" when coming from cart
+    setForceOrderType("checkout");
     // Use setTimeout to ensure the element is rendered
     setTimeout(() => {
       scrollToElementById("custom-order", 140);
+      // Reset forceOrderType after a short delay
+      setTimeout(() => setForceOrderType(null), 500);
     }, 100);
   };
 
@@ -392,6 +399,7 @@ function App() {
           onOrderSubmit={handleCheckoutSubmit}
           orderStatus={orderStatus}
           scrollToOrderForm={scrollToOrderForm}
+          forceOrderType={forceOrderType}
         />
       ) : (
         <main className="supervisor-page">

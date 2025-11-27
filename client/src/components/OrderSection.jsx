@@ -15,7 +15,7 @@ const initialForm = {
   notes: "",
 };
 
-function CheckoutForm({ cartItems, status, onSubmit }) {
+function CheckoutForm({ cartItems, status, onSubmit, forceOrderType }) {
   const { t } = useLanguage();
   const [form, setForm] = useState(initialForm);
   const [showReview, setShowReview] = useState(false);
@@ -27,6 +27,13 @@ function CheckoutForm({ cartItems, status, onSubmit }) {
       setOrderType("custom");
     }
   }, [cartItems.length, orderType]);
+
+  // Force order type when forceOrderType prop changes
+  useEffect(() => {
+    if (forceOrderType && cartItems.length > 0) {
+      setOrderType(forceOrderType);
+    }
+  }, [forceOrderType, cartItems.length]);
   
   const cartTotal = useMemo(
     () =>
