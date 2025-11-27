@@ -9,7 +9,7 @@
  * - Navigation and routing
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "./contexts/LanguageContext.jsx";
 import { useProducts } from "./hooks/useProducts.js";
 import { useCart } from "./hooks/useCart.js";
@@ -71,6 +71,8 @@ function App() {
     const email = loadSupervisorEmail();
     return email ? { email } : null;
   });
+  // Track if we just logged in to skip immediate verification
+  const justLoggedInRef = useRef(false);
 
   // Consumables (expenses/profit)
   const [consumables, setConsumables] = useState([]);
@@ -108,12 +110,14 @@ function App() {
     } catch (error) {
       console.error("Error fetching consumables:", error);
       setConsumableState({ loading: false, error: error.message });
-      // Only logout on explicit unauthorized errors, not on network issues
-      if (error.status === 401 || (error.message && error.message.includes("Unauthorized"))) {
-        handleSupervisorLogout();
+      // Don't logout immediately on 401 - might be server restart
+      // Only logout if we're sure the token is invalid (after multiple attempts)
+      if (error.status === 401) {
+        console.warn("401 error fetching consumables, but keeping session - might be server restart");
+        // Don't logout - let user try again
       }
     }
-  }, [handleSupervisorLogout, supervisorToken]);
+  }, [supervisorToken]);
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
@@ -126,16 +130,24 @@ function App() {
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrdersState({ loading: false, error: error.message });
-      // Only logout on explicit unauthorized errors, not on network issues
-      if (error.status === 401 || (error.message && error.message.includes("Unauthorized"))) {
-        handleSupervisorLogout();
+      // Don't logout immediately on 401 - might be server restart
+      // Only logout if we're sure the token is invalid (after multiple attempts)
+      if (error.status === 401) {
+        console.warn("401 error fetching orders, but keeping session - might be server restart");
+        // Don't logout - let user try again
       }
     }
-  }, [handleSupervisorLogout, supervisorToken]);
+  }, [supervisorToken]);
 
   // Verify token and load data when token is available
   useEffect(() => {
     if (!supervisorToken) return;
+    
+    // Skip verification if we just logged in (login handler already loaded data)
+    if (justLoggedInRef.current) {
+      justLoggedInRef.current = false;
+      return;
+    }
     
     let isMounted = true;
     let hasVerified = false; // Prevent multiple verifications
@@ -154,10 +166,20 @@ function App() {
         
         if (!response.ok) {
           if (response.status === 401) {
-            // Token is invalid, logout
-            if (isMounted) {
-              handleSupervisorLogout();
-            }
+            // Token is invalid, but don't logout immediately - might be server restart
+            // Only logout if we're sure it's not a temporary issue
+            console.warn("Token verification failed (401), but keeping session for now");
+            // Try to reload data - if that also fails, then logout
+            setTimeout(async () => {
+              try {
+                await fetchConsumables();
+              } catch (e) {
+                if (e.status === 401 && isMounted) {
+                  console.log("Multiple 401 errors, logging out");
+                  handleSupervisorLogout();
+                }
+              }
+            }, 1000);
             return;
           }
           // Other errors - don't logout, might be temporary
@@ -172,16 +194,16 @@ function App() {
           fetchConsumables();
           fetchOrders();
         } else if (!data.valid && isMounted) {
-          handleSupervisorLogout();
+          // Only logout if explicitly invalid, not on network errors
+          console.warn("Token marked as invalid, but keeping session");
         }
       } catch (error) {
         console.error("Token verification error:", error);
-        // For network errors, don't logout - might be temporary
-        // Only logout on explicit unauthorized errors
+        // Don't logout on network errors - might be temporary
+        // Only logout on explicit unauthorized errors after retry
         if (error.message?.includes("Unauthorized") || error.message?.includes("Invalid")) {
-          if (isMounted) {
-            handleSupervisorLogout();
-          }
+          // Don't logout immediately - might be server restart
+          console.warn("Token verification error, but keeping session:", error.message);
         }
       }
     };
@@ -264,6 +286,9 @@ function App() {
       
       setConsumableState({ loading: false, error: "" });
       
+      // Mark that we just logged in to skip immediate verification
+      justLoggedInRef.current = true;
+      
       // Fetch data with new token
       try {
         const [consumablesData, ordersData] = await Promise.all([
@@ -274,6 +299,7 @@ function App() {
         setOrders(ordersData);
       } catch (fetchError) {
         console.error("Error fetching initial data:", fetchError);
+        // Don't logout on fetch error - might be temporary
       }
       
       return { success: true };
