@@ -26,3 +26,4 @@ mongodb+srv://apet-mkoyan-01:MyPassword123@amelie.7y5r1bs.mongodb.net/amelie-caf
 
 ⚠️ ВАЖНО: Не делитесь этой строкой ни с кем! Она содержит пароль к вашей базе данных.
 
+

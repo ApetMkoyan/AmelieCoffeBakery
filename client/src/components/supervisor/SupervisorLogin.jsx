@@ -19,7 +19,11 @@ function SupervisorLogin({ onLogin }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setStatus({ type: "loading", message: t("supervisor.login.signIn") });
-    const result = await onLogin(form);
+    const trimmedCredentials = {
+      email: form.email.trim(),
+      passcode: form.passcode.trim(),
+    };
+    const result = await onLogin(trimmedCredentials);
     if (result.success) {
       setStatus({ type: "success", message: t("supervisor.login.welcome") });
       setForm(initialForm);

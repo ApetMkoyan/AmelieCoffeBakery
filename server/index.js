@@ -222,12 +222,20 @@ app.post("/api/supervisor/login", (req, res) => {
   if (!email || !passcode) {
     return res.status(400).json({ error: "Email and passcode are required" });
   }
-  if (email !== SUPERVISOR_LOGIN || passcode !== SUPERVISOR_PASSCODE) {
-    return res.status(401).json({ error: "Invalid credentials" });
+  
+  const trimmedEmail = email.trim();
+  const trimmedPasscode = passcode.trim();
+  
+  if (trimmedEmail !== SUPERVISOR_LOGIN) {
+    return res.status(401).json({ error: "Invalid login" });
   }
+  if (trimmedPasscode !== SUPERVISOR_PASSCODE) {
+    return res.status(401).json({ error: "Invalid password" });
+  }
+  
   const token = nanoid();
-  activeSessions.set(token, { email, signedInAt: new Date().toISOString() });
-  res.json({ token, profile: { email } });
+  activeSessions.set(token, { email: trimmedEmail, signedInAt: new Date().toISOString() });
+  res.json({ token, profile: { email: trimmedEmail } });
 });
 
 app.post("/api/products", authenticateSupervisor, async (req, res, next) => {
