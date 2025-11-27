@@ -173,7 +173,7 @@ export const translations = {
       title: "Supervisor Workspace",
       subtitle: "Manage products, track costs, and confirm daily orders.",
       loginSubtitle: "Log in to access the private Amelie dashboard.",
-      login: { title: "Supervisor Access", subtitle: "Enter your Amelie supervisor credentials to continue.", email: "Email or Login", passcode: "Passcode", signIn: "Signing in...", logIn: "Log In", welcome: "Welcome back!", failed: "Login failed." },
+      login: { title: "Supervisor Access", subtitle: "Enter your Amelie supervisor credentials to continue.", email: "Email or Login", passcode: "Passcode", signIn: "Signing in...", logIn: "Log In", welcome: "Welcome back!", failed: "Login failed.", invalidCredentials: "Invalid login or password", invalidPassword: "Invalid password", fieldsRequired: "Please fill in all fields" },
       info: { loggedIn: "Logged in as", logout: "Log out" },
       panels: { productStudio: "Product Studio", expensesProfit: "Expenses & Profit", ordersCalendar: "Orders Calendar" },
       errors: {
@@ -438,7 +438,7 @@ export const translations = {
       title: "სუპერვაიზერის სამუშაო ადგილი",
       subtitle: "პროდუქტების მართვა, ხარჯების თვალყურდევნება და შეკვეთების დადასტურება.",
       loginSubtitle: "შედით სისტემაში ამელის პირადი დაფის წვდომისთვის.",
-      login: { title: "სუპერვაიზერის წვდომა", subtitle: "შეიყვანეთ თქვენი ამელის სუპერვაიზერის მონაცემები გასაგრძელებლად.", email: "ელფოსტა ან შესვლა", passcode: "პაროლი", signIn: "შესვლა...", logIn: "შესვლა", welcome: "კეთილი იყოს თქვენი დაბრუნება!", failed: "შესვლა ვერ მოხერხდა." },
+      login: { title: "სუპერვაიზერის წვდომა", subtitle: "შეიყვანეთ თქვენი ამელის სუპერვაიზერის მონაცემები გასაგრძელებლად.", email: "ელფოსტა ან შესვლა", passcode: "პაროლი", signIn: "შესვლა...", logIn: "შესვლა", welcome: "კეთილი იყოს თქვენი დაბრუნება!", failed: "შესვლა ვერ მოხერხდა.", invalidCredentials: "არასწორი მონაცემები", invalidPassword: "არასწორი პაროლი", fieldsRequired: "გთხოვთ, შეავსოთ ყველა ველი" },
       info: { loggedIn: "შესული ხართ როგორც", logout: "გასვლა" },
       panels: { productStudio: "პროდუქტების სტუდია", expensesProfit: "ხარჯები და მოგება", ordersCalendar: "შეკვეთების კალენდარი" },
       errors: {
@@ -703,7 +703,7 @@ export const translations = {
       title: "Վերահսկիչի աշխատասենյակ",
       subtitle: "Կառավարեք ապրանքները, հետևեք ծախսերին և հաստատեք օրական պատվերները:",
       loginSubtitle: "Մուտք գործեք Ամելիի մասնավոր վահանակ:",
-      login: { title: "Վերահսկիչի մուտք", subtitle: "Մուտքագրեք ձեր Ամելիի վերահսկիչի տվյալները շարունակելու համար:", email: "Էլ. փոստ կամ մուտք", passcode: "Գաղտնաբառ", signIn: "Մուտք գործում...", logIn: "Մուտք", welcome: "Բարի վերադարձ!", failed: "Մուտքը ձախողվեց:" },
+      login: { title: "Վերահսկիչի մուտք", subtitle: "Մուտքագրեք ձեր Ամելիի վերահսկիչի տվյալները շարունակելու համար:", email: "Էլ. փոստ կամ մուտք", passcode: "Գաղտնաբառ", signIn: "Մուտք գործում...", logIn: "Մուտք", welcome: "Բարի վերադարձ!", failed: "Մուտքը ձախողվեց:", invalidCredentials: "Անվավեր մուտքագրում կամ գաղտնաբառ", invalidPassword: "Անվավեր գաղտնաբառ", fieldsRequired: "Խնդրում ենք լրացնել բոլոր դաշտերը" },
       info: { loggedIn: "Մուտք եք գործել որպես", logout: "Ելք" },
       panels: { productStudio: "Ապրանքների ստուդիա", expensesProfit: "Ծախսեր և շահույթ", ordersCalendar: "Պատվերների օրացույց" },
       errors: {
@@ -968,7 +968,7 @@ export const translations = {
       title: "Рабочее место супервайзера",
       subtitle: "Управляйте продуктами, отслеживайте расходы и подтверждайте ежедневные заказы.",
       loginSubtitle: "Войдите для доступа к частной панели Амели.",
-      login: { title: "Доступ супервайзера", subtitle: "Введите ваши учетные данные супервайзера Амели для продолжения.", email: "Email или логин", passcode: "Пароль", signIn: "Вход...", logIn: "Войти", welcome: "Добро пожаловать!", failed: "Вход не удался." },
+      login: { title: "Доступ супервайзера", subtitle: "Введите ваши учетные данные супервайзера Амели для продолжения.", email: "Email или логин", passcode: "Пароль", signIn: "Вход...", logIn: "Войти", welcome: "Добро пожаловать!", failed: "Вход не удался.", invalidCredentials: "Неверный логин или пароль", invalidPassword: "Неверный пароль", fieldsRequired: "Заполните все поля" },
       info: { loggedIn: "Вошли как", logout: "Выйти" },
       panels: { productStudio: "Студия продуктов", expensesProfit: "Расходы и прибыль", ordersCalendar: "Календарь заказов" },
       errors: {

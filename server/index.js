@@ -226,13 +226,26 @@ app.post("/api/supervisor/login", (req, res) => {
   const trimmedEmail = email.trim();
   const trimmedPasscode = passcode.trim();
   
+  // Debug logging (remove in production if needed)
+  console.log("Login attempt:", {
+    receivedEmail: trimmedEmail,
+    receivedPasscode: trimmedPasscode ? "***" : "empty",
+    expectedLogin: SUPERVISOR_LOGIN,
+    expectedPasscode: SUPERVISOR_PASSCODE ? "***" : "empty",
+    emailMatch: trimmedEmail === SUPERVISOR_LOGIN,
+    passcodeMatch: trimmedPasscode === SUPERVISOR_PASSCODE
+  });
+  
   if (trimmedEmail !== SUPERVISOR_LOGIN) {
+    console.log("❌ Login failed: Invalid email");
     return res.status(401).json({ error: "Invalid login" });
   }
   if (trimmedPasscode !== SUPERVISOR_PASSCODE) {
+    console.log("❌ Login failed: Invalid password");
     return res.status(401).json({ error: "Invalid password" });
   }
   
+  console.log("✅ Login successful");
   const token = nanoid();
   activeSessions.set(token, { email: trimmedEmail, signedInAt: new Date().toISOString() });
   res.json({ token, profile: { email: trimmedEmail } });

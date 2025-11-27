@@ -226,7 +226,18 @@ function App() {
       return { success: true };
     } catch (error) {
       console.error("Login error:", error);
-      return { success: false, message: error.message || "Login failed" };
+      let errorMessage = error.message || "Login failed";
+      
+      // Translate common error messages
+      if (errorMessage.includes("Invalid login") || errorMessage.includes("Invalid credentials")) {
+        errorMessage = t("supervisor.login.invalidCredentials") || "Неверный логин или пароль";
+      } else if (errorMessage.includes("Invalid password")) {
+        errorMessage = t("supervisor.login.invalidPassword") || "Неверный пароль";
+      } else if (errorMessage.includes("required")) {
+        errorMessage = t("supervisor.login.fieldsRequired") || "Заполните все поля";
+      }
+      
+      return { success: false, message: errorMessage };
     }
   };
 
