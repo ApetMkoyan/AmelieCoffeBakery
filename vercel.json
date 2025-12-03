@@ -24,8 +24,7 @@
       "dest": "server/index.js"
     },
     {
-      "src": "/admin.html",
-      "dest": "/admin.html"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",

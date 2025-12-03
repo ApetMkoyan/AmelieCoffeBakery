@@ -752,17 +752,25 @@ app.post("/api/migrate-data", authenticateSupervisor, async (req, res, next) => 
 app.use("/uploads", express.static(uploadsDir));
 app.use(express.static(clientDir));
 
+// Serve admin.html specifically
 app.get("/admin.html", (req, res) => {
   const adminPath = path.join(clientDir, "admin.html");
   if (fs.existsSync(adminPath)) {
     res.sendFile(adminPath);
   } else {
-    res.status(404).send("Admin panel not found");
+    // Fallback: try to serve from dist if not found
+    const distAdminPath = path.resolve(__dirname, "../client/dist/admin.html");
+    if (fs.existsSync(distAdminPath)) {
+      res.sendFile(distAdminPath);
+    } else {
+      res.status(404).json({ error: "Admin panel not found", clientDir, adminPath, distAdminPath });
+    }
   }
 });
 
 app.get("*", (_req, res, next) => {
   if (_req.path.startsWith("/api")) return next();
+  if (_req.path.startsWith("/uploads")) return next();
   res.sendFile(path.join(clientDir, "index.html"));
 });
 
