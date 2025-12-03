@@ -3,7 +3,7 @@
 Админ панель теперь находится в отдельном файле и доступна по адресу:
 
 **В разработке:** http://localhost:5173/admin.html  
-**В продакшене:** https://your-domain.com/admin.html
+**В продакшене:** https://amelie-coffe-bakery.vercel.app/admin.html
 
 ## Настройка
 

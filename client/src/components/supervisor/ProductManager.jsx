@@ -1,5 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import { apiUploadFile } from "../../utils/api.js";
+import { loadSupervisorToken } from "../../utils/storage.js";
 
 const blankProduct = {
   category: "drinks",
@@ -23,10 +25,75 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
   const [editingId, setEditingId] = useState(null);
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [activeCategory, setActiveCategory] = useState("drinks");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setStatus({ 
+        type: "error", 
+        message: "Только изображения (jpeg, jpg, png, gif, webp)" 
+      });
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setStatus({ 
+        type: "error", 
+        message: "Файл слишком большой (максимум 5MB)" 
+      });
+      return;
+    }
+
+    setUploading(true);
+    setStatus({ type: "loading", message: "Загрузка изображения..." });
+
+    try {
+      const token = loadSupervisorToken();
+      if (!token) {
+        throw new Error("Необходима авторизация");
+      }
+
+      const result = await apiUploadFile(file, token);
+      if (result.url) {
+        // Get full URL
+        const fullUrl = result.url.startsWith("http") 
+          ? result.url 
+          : `${window.location.origin}${result.url}`;
+        setForm((prev) => ({ ...prev, image: fullUrl }));
+        setStatus({ type: "success", message: "Изображение загружено" });
+        setTimeout(() => {
+          setStatus({ type: "idle", message: "" });
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setStatus({ 
+        type: "error", 
+        message: error.message || "Ошибка загрузки изображения" 
+      });
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSubmit = async (event) => {
@@ -166,13 +233,31 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
           </label>
           <label>
             {t("supervisor.products.photoUrl")}
-            <input
-              type="url"
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="https://..."
-            />
+            <div className="image-input-wrapper">
+              <input
+                type="url"
+                name="image"
+                value={form.image}
+                onChange={handleChange}
+                placeholder="https://..."
+              />
+              <button
+                type="button"
+                className="btn-upload"
+                onClick={handleUploadClick}
+                disabled={uploading}
+                title="Загрузить с устройства"
+              >
+                {uploading ? "..." : "📷"}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                onChange={handleFileSelect}
+                style={{ display: "none" }}
+              />
+            </div>
           </label>
           <div className="form-actions">
             <button className="btn primary" type="submit" disabled={status.type === "loading"}>

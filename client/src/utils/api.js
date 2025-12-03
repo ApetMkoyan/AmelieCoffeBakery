@@ -61,3 +61,30 @@ export async function apiDelete(endpoint, token = null) {
   return response.json();
 }
 
+export async function apiUploadFile(file, token = null) {
+  const formData = new FormData();
+  formData.append("image", file);
+  
+  const url = `${API_BASE}/upload`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: token ? { "x-supervisor-token": token } : {},
+    body: formData,
+  });
+
+  if (!response.ok) {
+    let errorMessage = response.statusText;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch (e) {
+      // not JSON
+    }
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  return response.json();
+}
+

@@ -1303,6 +1303,52 @@ tfoot td {
   gap: 1.25rem;
 }
 
+.image-input-wrapper {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.image-input-wrapper input[type="url"] {
+  flex: 1;
+  padding-right: 3rem;
+}
+
+.btn-upload {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.btn-upload:hover:not(:disabled) {
+  background: var(--accent-dark);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.btn-upload:active:not(:disabled) {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.btn-upload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .product-manager__list {
   width: 100%;
 }
