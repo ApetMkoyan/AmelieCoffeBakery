@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": "dist",
   "builds": [
     {
       "src": "server/index.js",
@@ -10,7 +9,7 @@
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
+        "outputDirectory": "dist",
         "buildCommand": "cd client && npm install && npm run build"
       }
     }
