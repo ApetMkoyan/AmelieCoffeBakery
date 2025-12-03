@@ -1,7 +1,6 @@
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
 import ProductCategoryCard from "../products/ProductCategoryCard.jsx";
 import DrinksCategoryCard from "../products/DrinksCategoryCard.jsx";
-import { scrollToElementById } from "../../utils/scroll.js";
 
 const sections = [
   { id: "drinks", labelKey: "menu.drinks" },
@@ -19,19 +18,9 @@ function MenuAccordion({
 }) {
   const { t } = useLanguage();
 
-  const handleSummaryClick = (sectionId, e) => {
-    if (sectionId === "custom-order") {
-      e.preventDefault();
-      // Use setTimeout to ensure smooth scroll after details opens
-      setTimeout(() => {
-        scrollToElementById("custom-order", 140);
-      }, 100);
-    }
-  };
-
   return (
     <div className="menu-accordion">
-      {sections.map((section, index) => {
+      {sections.map((section) => {
         const isCustom = section.id === "custom-order";
         const categoryItems = (() => {
           if (isCustom) return [];
@@ -45,15 +34,13 @@ function MenuAccordion({
         })();
 
         return (
-          <details
+          <section
             key={section.id}
             id={section.id}
-            open={index === 0}
+            className="menu-section"
           >
-            <summary onClick={(e) => handleSummaryClick(section.id, e)}>
-              {t(section.labelKey)}
-            </summary>
-            <div className="accordion-panel">
+            <h2 className="menu-section-title">{t(section.labelKey)}</h2>
+            <div className="menu-section-content">
               {isCustom ? (
                 renderCustomSection()
               ) : categoryItems.length ? (
@@ -80,7 +67,7 @@ function MenuAccordion({
                 <p>{t("menu.updatingMenu")}</p>
               )}
             </div>
-          </details>
+          </section>
         );
       })}
     </div>

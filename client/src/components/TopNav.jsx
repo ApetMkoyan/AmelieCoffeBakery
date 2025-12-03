@@ -4,7 +4,6 @@ const guestLinks = [
   { id: "home", href: "#top", labelKey: "nav.home" },
   { id: "menu", href: "#menu", labelKey: "nav.menu" },
   { id: "custom-order", href: "#custom-order", labelKey: "nav.customOrder" },
-  { id: "supervisor", href: "#supervisor", labelKey: "nav.supervisor" },
 ];
 
 const supervisorLinks = [

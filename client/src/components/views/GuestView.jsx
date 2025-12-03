@@ -4,7 +4,6 @@ import Hero from "../Hero.jsx";
 import ProductMenuBar from "../ProductMenuBar.jsx";
 import SectionHeading from "../SectionHeading.jsx";
 import MenuAccordion from "../menu/MenuAccordion.jsx";
-import CartPanel from "../cart/CartPanel.jsx";
 import CheckoutForm from "../OrderSection.jsx";
 import { scrollToElementById } from "../../utils/scroll.js";
 
@@ -114,19 +113,6 @@ function GuestView({
           />
         </section>
 
-        <section id="cart" className="section cart-section">
-          <SectionHeading
-            title={t("cart.title")}
-            subtitle={t("cart.subtitle")}
-          />
-          <CartPanel
-            items={cartItems}
-            onIncrement={(id) => updateCartQuantity(id, 1)}
-            onDecrement={(id) => updateCartQuantity(id, -1)}
-            onRemove={removeFromCart}
-            onOrderClick={scrollToOrderForm}
-          />
-        </section>
       </main>
     </>
   );

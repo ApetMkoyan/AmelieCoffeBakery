@@ -46,7 +46,9 @@ export const translations = {
       items: "item(s)",
       addFavorites: "Add your favorites to begin an order.",
       addedToCart: "{name} added to cart",
-      orderNow: "Order Now"
+      orderNow: "Order Now",
+      goToCheckout: "Go to Checkout",
+      close: "Close"
     },
     order: { 
       title: "Order Details", 
@@ -96,7 +98,7 @@ export const translations = {
     products: { 
       addToCart: "Add to cart", 
       info: "Info", 
-      hideInfo: "Hide info",
+      hideInfo: "Hide",
       selectSize: "Select Size",
       size300ml: "300ml",
       size500ml: "500ml",
@@ -311,7 +313,9 @@ export const translations = {
       items: "ნივთი(ები)",
       addFavorites: "დაამატეთ თქვენი რჩეულები შეკვეთის დასაწყებად.",
       addedToCart: "{name} დაემატა კალათაში",
-      orderNow: "შეკვეთა"
+      orderNow: "შეკვეთა",
+      goToCheckout: "გადადით გადახდაზე",
+      close: "დახურვა"
     },
     order: { 
       title: "შეკვეთის დეტალები", 
@@ -361,7 +365,7 @@ export const translations = {
     products: { 
       addToCart: "კალათაში დამატება", 
       info: "ინფორმაცია", 
-      hideInfo: "ინფორმაციის დამალვა",
+      hideInfo: "დამალვა",
       selectSize: "აირჩიეთ ზომა",
       size300ml: "300მლ",
       size500ml: "500მლ",
@@ -576,7 +580,9 @@ export const translations = {
       items: "ապրանք(ներ)",
       addFavorites: "Ավելացրեք ձեր ընտրյալները պատվեր սկսելու համար:",
       addedToCart: "{name} ավելացվել է զամբյուղում",
-      orderNow: "Պատվիրել"
+      orderNow: "Պատվիրել",
+      goToCheckout: "Անցնել վճարման",
+      close: "Փակել"
     },
     order: { 
       title: "Պատվերի մանրամասներ", 
@@ -626,7 +632,7 @@ export const translations = {
     products: { 
       addToCart: "Ավելացնել զամբյուղ", 
       info: "Տեղեկություն", 
-      hideInfo: "Թաքցնել տեղեկությունը",
+      hideInfo: "Թաքցնել",
       selectSize: "Ընտրել չափը",
       size300ml: "300մլ",
       size500ml: "500մլ",
@@ -841,7 +847,9 @@ export const translations = {
       items: "товар(ов)",
       addFavorites: "Добавьте свои избранные товары, чтобы начать заказ.",
       addedToCart: "{name} добавлено в корзину",
-      orderNow: "Заказать"
+      orderNow: "Заказать",
+      goToCheckout: "Перейти к оформлению",
+      close: "Закрыть"
     },
     order: { 
       title: "Детали заказа", 
@@ -891,7 +899,7 @@ export const translations = {
     products: { 
       addToCart: "Добавить в корзину", 
       info: "Информация", 
-      hideInfo: "Скрыть информацию",
+      hideInfo: "Скрыть",
       selectSize: "Выберите размер",
       size300ml: "300мл",
       size500ml: "500мл",

@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -6,7 +9,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { nanoid } from "nanoid";
-
 // Use MongoDB if MONGODB_URI is set, otherwise use file storage
 const USE_MONGODB = !!process.env.MONGODB_URI;
 let readJson, writeJson, connectDB;

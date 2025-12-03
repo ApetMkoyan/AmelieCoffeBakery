@@ -68,35 +68,8 @@ function ProductMenuBar() {
     // Set active section for visual feedback
     setActiveSection(sectionId);
     
-    // Find the details element (accordion) for this section
-    let detailsElement = document.querySelector(`details#${sectionId}`);
-    
-    // If not found, try to find it in the menu section
-    if (!detailsElement) {
-      detailsElement = document.querySelector(`details[id="${sectionId}"]`);
-    }
-    
-    if (detailsElement) {
-      // Open the accordion if it's closed
-      if (!detailsElement.open) {
-        detailsElement.open = true;
-        // Wait for the accordion to expand before scrolling
-        // This ensures the target position is accurate
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setTimeout(() => {
-              scrollToElementById(sectionId, 140);
-            }, 200);
-          });
-        });
-      } else {
-        // If already open, scroll smoothly immediately
-        scrollToElementById(sectionId, 140);
-      }
-    } else {
-      // Fallback: try to find any element with this ID
-      scrollToElementById(sectionId, 140);
-    }
+    // Scroll to the section
+    scrollToElementById(sectionId, 140);
   };
 
   return (
