@@ -227,10 +227,33 @@ app.get("/api/health", (_req, res) => {
 
 app.get("/api/products", async (_req, res, next) => {
   try {
+    console.log("📦 Fetching products from:", PRODUCTS_FILE);
+    console.log("🔍 Environment:", {
+      USE_MONGODB,
+      MONGODB_URI: !!process.env.MONGODB_URI,
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL
+    });
+    
     const products = await readJson(PRODUCTS_FILE, {});
+    const categoriesCount = Object.keys(products).length;
+    const totalProducts = Object.values(products).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0);
+    
+    console.log("✅ Products loaded:", categoriesCount, "categories,", totalProducts, "total products");
+    
+    if (categoriesCount === 0) {
+      console.warn("⚠️ No products found! Returning empty object.");
+    }
+    
     res.json(products);
   } catch (error) {
-    next(error);
+    console.error("❌ Error loading products:", error);
+    console.error("❌ Error stack:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to load products", 
+      message: error.message,
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined
+    });
   }
 });
 
@@ -779,14 +802,60 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
+// Initialize defaults
 ensureDefaults()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Amelie server listening on port ${PORT}`);
+  .then(async () => {
+    console.log("✅ Server initialized successfully");
+    console.log("🔍 Server config:", {
+      PORT,
+      USE_MONGODB,
+      MONGODB_URI: !!process.env.MONGODB_URI,
+      VERCEL: process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      NODE_ENV: process.env.NODE_ENV,
+      clientDir,
+      distDirExists: fs.existsSync(distDir)
     });
+    
+    // Check MongoDB connection if using MongoDB
+    if (USE_MONGODB) {
+      try {
+        await connectDB();
+        console.log("✅ MongoDB connected successfully");
+        
+        // Test read to verify connection works
+        const testProducts = await readJson(PRODUCTS_FILE, {});
+        console.log("✅ MongoDB read test successful:", Object.keys(testProducts).length, "categories");
+      } catch (error) {
+        console.error("❌ MongoDB connection error:", error.message);
+        console.error("⚠️ Server will continue but may have issues loading data");
+      }
+    } else {
+      // Check file storage
+      const testProducts = await readJson(PRODUCTS_FILE, {});
+      console.log("✅ File storage read test successful:", Object.keys(testProducts).length, "categories");
+      if (Object.keys(testProducts).length === 0) {
+        console.warn("⚠️ No products found in file storage! Make sure products.json exists and has data.");
+      }
+    }
+    
+    // Only start listening if not on Vercel (Vercel handles the serverless function)
+    if (process.env.VERCEL !== "1" && !process.env.VERCEL_ENV) {
+      app.listen(PORT, () => {
+        console.log(`Amelie server listening on port ${PORT}`);
+      });
+    } else {
+      console.log("🚀 Running on Vercel - serverless mode");
+    }
   })
   .catch((error) => {
-    console.error("Failed to bootstrap server", error);
-    process.exit(1);
+    console.error("❌ Failed to bootstrap server", error);
+    console.error("❌ Error stack:", error.stack);
+    if (process.env.VERCEL !== "1" && !process.env.VERCEL_ENV) {
+      process.exit(1);
+    }
   });
+
+// Export app for Vercel serverless functions
+export default app;
 

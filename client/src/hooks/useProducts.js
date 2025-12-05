@@ -14,12 +14,28 @@ export function useProducts() {
     try {
       setLoading(true);
       setError("");
+      console.log("🔄 Fetching products...");
       const data = await apiGet("/products");
-      setProducts(data);
-      setError("");
+      console.log("✅ Products fetched:", {
+        categories: Object.keys(data).length,
+        totalProducts: Object.values(data).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0)
+      });
+      
+      if (!data || Object.keys(data).length === 0) {
+        console.warn("⚠️ Products data is empty!");
+        setError("No products available. Please try again later.");
+      } else {
+        setProducts(data);
+        setError("");
+      }
     } catch (err) {
-      console.error("Error fetching products:", err);
-      setError(err.message || "Unable to load menu");
+      console.error("❌ Error fetching products:", err);
+      console.error("❌ Error details:", {
+        message: err.message,
+        status: err.status,
+        stack: err.stack
+      });
+      setError(err.message || "Unable to load menu. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }

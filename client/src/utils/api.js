@@ -2,28 +2,44 @@ const API_BASE = "/api";
 
 export async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  
+  console.log("🌐 API Request:", { url, method: options.method || "GET" });
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
 
-  if (!response.ok) {
-    let errorMessage = response.statusText;
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || errorMessage;
-    } catch (e) {
-      // not JSON
+    console.log("📡 API Response:", { 
+      url, 
+      status: response.status, 
+      ok: response.ok,
+      statusText: response.statusText 
+    });
+
+    if (!response.ok) {
+      let errorMessage = response.statusText;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+        console.error("❌ API Error:", { url, status: response.status, error: errorData });
+      } catch (e) {
+        console.error("❌ API Error (non-JSON):", { url, status: response.status, error: response.statusText });
+      }
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      throw error;
     }
-    const error = new Error(errorMessage);
-    error.status = response.status;
+
+    return response;
+  } catch (error) {
+    console.error("❌ API Request failed:", { url, error: error.message, stack: error.stack });
     throw error;
   }
-
-  return response;
 }
 
 export async function apiGet(endpoint, token = null) {
