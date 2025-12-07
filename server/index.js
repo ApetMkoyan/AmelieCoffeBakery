@@ -182,14 +182,35 @@ const migrateDataToMongo = async () => {
 };
 
 const ensureDefaults = async () => {
-  if (USE_MONGODB) {
-    await connectDB();
-    // Migrate data from JSON files to MongoDB if collections are empty
-    await migrateDataToMongo();
+  try {
+    if (USE_MONGODB) {
+      await connectDB();
+      // Migrate data from JSON files to MongoDB if collections are empty
+      await migrateDataToMongo();
+    }
+    
+    // Initialize files with fallback values if they don't exist
+    try {
+      await readJson(PRODUCTS_FILE, {});
+    } catch (error) {
+      console.warn("⚠️ Could not read products file, will use empty object:", error.message);
+    }
+    
+    try {
+      await readJson(ORDERS_FILE, []);
+    } catch (error) {
+      console.warn("⚠️ Could not read orders file, will use empty array:", error.message);
+    }
+    
+    try {
+      await readJson(CONSUMABLES_FILE, []);
+    } catch (error) {
+      console.warn("⚠️ Could not read consumables file, will use empty array:", error.message);
+    }
+  } catch (error) {
+    console.error("❌ Error in ensureDefaults:", error);
+    // Don't throw - allow server to start even if initialization fails
   }
-  await readJson(PRODUCTS_FILE, {});
-  await readJson(ORDERS_FILE, []);
-  await readJson(CONSUMABLES_FILE, []);
 };
 
 const authenticateSupervisor = (req, res, next) => {
@@ -235,7 +256,27 @@ app.get("/api/products", async (_req, res, next) => {
       VERCEL: process.env.VERCEL
     });
     
-    const products = await readJson(PRODUCTS_FILE, {});
+    let products;
+    try {
+      products = await readJson(PRODUCTS_FILE, {});
+    } catch (readError) {
+      console.error("❌ Error reading products file:", readError);
+      console.error("❌ Read error details:", {
+        message: readError.message,
+        code: readError.code,
+        path: readError.path,
+        stack: readError.stack
+      });
+      // Return empty object instead of throwing error
+      products = {};
+    }
+    
+    // Ensure products is an object
+    if (!products || typeof products !== "object" || Array.isArray(products)) {
+      console.warn("⚠️ Products data is not a valid object, using empty object");
+      products = {};
+    }
+    
     const categoriesCount = Object.keys(products).length;
     const totalProducts = Object.values(products).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0);
     
@@ -246,19 +287,22 @@ app.get("/api/products", async (_req, res, next) => {
     
     if (categoriesCount === 0 || totalProducts === 0) {
       console.warn("⚠️ No products found! Returning empty object.");
-      console.warn("⚠️ Products data:", JSON.stringify(products, null, 2).substring(0, 500));
+      console.warn("⚠️ Products data type:", typeof products);
+      console.warn("⚠️ Products data keys:", Object.keys(products));
     }
     
     // Always return the products object, even if empty
     res.json(products);
   } catch (error) {
     console.error("❌ Error loading products:", error);
+    console.error("❌ Error name:", error.name);
+    console.error("❌ Error message:", error.message);
     console.error("❌ Error stack:", error.stack);
-    res.status(500).json({ 
-      error: "Failed to load products", 
-      message: error.message,
-      details: process.env.NODE_ENV === "development" ? error.stack : undefined
-    });
+    console.error("❌ Error code:", error.code);
+    
+    // Return empty object instead of error to prevent client-side issues
+    console.warn("⚠️ Returning empty products object due to error");
+    res.status(200).json({});
   }
 });
 

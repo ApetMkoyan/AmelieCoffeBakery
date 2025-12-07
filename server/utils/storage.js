@@ -29,10 +29,27 @@ export const readJson = async (fileName, fallback) => {
   const filePath = path.join(dataDir, fileName);
   try {
     const raw = await fs.readFile(filePath, "utf8");
-    return JSON.parse(raw);
+    try {
+      return JSON.parse(raw);
+    } catch (parseError) {
+      console.error(`❌ JSON parse error in ${fileName}:`, parseError.message);
+      console.error(`❌ File path: ${filePath}`);
+      // If JSON is invalid and we have a fallback, return it
+      if (fallback !== undefined) {
+        console.warn(`⚠️ Returning fallback for ${fileName} due to parse error`);
+        return fallback;
+      }
+      throw parseError;
+    }
   } catch (error) {
     if (error.code === "ENOENT" && fallback !== undefined) {
+      console.log(`📝 File ${fileName} not found, creating with fallback`);
       await writeJson(fileName, fallback);
+      return fallback;
+    }
+    // For other errors, if we have a fallback, return it instead of throwing
+    if (fallback !== undefined) {
+      console.warn(`⚠️ Error reading ${fileName}, returning fallback:`, error.message);
       return fallback;
     }
     throw error;

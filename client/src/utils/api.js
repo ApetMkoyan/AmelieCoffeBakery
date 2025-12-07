@@ -23,10 +23,19 @@ export async function apiRequest(endpoint, options = {}) {
 
     if (!response.ok) {
       let errorMessage = response.statusText;
+      let errorData = null;
       try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-        console.error("❌ API Error:", { url, status: response.status, error: errorData });
+        const text = await response.text();
+        if (text) {
+          try {
+            errorData = JSON.parse(text);
+            errorMessage = errorData.error || errorData.message || errorMessage;
+          } catch (parseError) {
+            // If response is not JSON, use the text as error message
+            errorMessage = text || errorMessage;
+          }
+        }
+        console.error("❌ API Error:", { url, status: response.status, error: errorData || errorMessage });
       } catch (e) {
         console.error("❌ API Error (non-JSON):", { url, status: response.status, error: response.statusText });
       }
