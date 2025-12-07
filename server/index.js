@@ -38,21 +38,40 @@ const clientDir = fs.existsSync(distDir) ? distDir : clientFallback;
 
 // Setup file upload directory
 const uploadsDir = path.resolve(__dirname, "public", "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// On Vercel, we can't create directories, so skip this
+if (!process.env.VERCEL) {
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+  } catch (error) {
+    console.warn("⚠️ Could not create uploads directory:", error.message);
+    console.warn("⚠️ File uploads may not work on this platform");
+  }
+} else {
+  console.log("⚠️ Running on Vercel - uploads directory creation skipped (read-only filesystem)");
 }
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `product-${uniqueSuffix}${ext}`);
-  },
-});
+// On Vercel, use memory storage since we can't write to disk
+let storage;
+if (process.env.VERCEL) {
+  // Use memory storage on Vercel (files are stored in RAM)
+  storage = multer.memoryStorage();
+  console.log("⚠️ Using memory storage for file uploads (Vercel serverless)");
+} else {
+  // Use disk storage for local development
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, `product-${uniqueSuffix}${ext}`);
+    },
+  });
+}
 
 const upload = multer({
   storage: storage,
@@ -399,11 +418,38 @@ app.post("/api/orders", async (req, res, next) => {
 
 // Image upload endpoint
 app.post("/api/upload", authenticateSupervisor, upload.single("image"), (req, res, next) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    
+    // On Vercel, files are in memory (req.file.buffer)
+    // For now, we'll return a placeholder URL or use a cloud storage service
+    if (process.env.VERCEL) {
+      // On Vercel, we can't save files to disk
+      // You would need to upload to a cloud storage service like Cloudinary, AWS S3, etc.
+      // For now, return the image as base64 or use a placeholder
+      console.warn("⚠️ File upload on Vercel - file stored in memory only");
+      console.warn("⚠️ Consider using cloud storage (Cloudinary, AWS S3, etc.) for production");
+      
+      // Return a placeholder or base64 URL
+      // For production, you should upload to cloud storage and return that URL
+      const base64Image = req.file.buffer.toString('base64');
+      const dataUrl = `data:${req.file.mimetype};base64,${base64Image}`;
+      
+      return res.json({ 
+        url: dataUrl,
+        warning: "File stored in memory. Use cloud storage for production."
+      });
+    } else {
+      // Local development - save to disk
+      const imageUrl = `/uploads/${req.file.filename}`;
+      res.json({ url: imageUrl });
+    }
+  } catch (error) {
+    console.error("❌ Error in /api/upload:", error);
+    res.status(500).json({ error: "Failed to upload file" });
   }
-  const imageUrl = `/uploads/${req.file.filename}`;
-  res.json({ url: imageUrl });
 });
 
 // Error handler for multer
