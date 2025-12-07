@@ -32,12 +32,39 @@ export async function apiRequest(endpoint, options = {}) {
       }
       const error = new Error(errorMessage);
       error.status = response.status;
+      error.name = "APIError";
       throw error;
     }
 
     return response;
   } catch (error) {
-    console.error("❌ API Request failed:", { url, error: error.message, stack: error.stack });
+    // Enhanced error handling for network issues
+    console.error("❌ API Request failed:", { 
+      url, 
+      error: error.message, 
+      name: error.name,
+      status: error.status,
+      stack: error.stack 
+    });
+    
+    // If it's already an APIError (from response.ok check), just rethrow
+    if (error.name === "APIError") {
+      throw error;
+    }
+    
+    // Network errors - connection refused, CORS, timeout, etc.
+    if (error.name === "TypeError" || 
+        error.message.includes("Failed to fetch") ||
+        error.message.includes("NetworkError") ||
+        error.message.includes("Network request failed") ||
+        error.message.includes("Load failed")) {
+      const networkError = new Error("Connection error. Please check your internet connection and try again.");
+      networkError.name = "NetworkError";
+      networkError.originalError = error;
+      throw networkError;
+    }
+    
+    // Re-throw other errors as-is
     throw error;
   }
 }

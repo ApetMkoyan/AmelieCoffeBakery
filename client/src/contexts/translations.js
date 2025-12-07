@@ -30,6 +30,7 @@ export const translations = {
       descriptionFallback: "Signature creations prepared by the Amelie team each morning.",
       updatingMenu: "We're updating this menu. Check back shortly!",
       loadingMenu: "Loading menu...",
+      retry: "Try Again",
       customOrderPreview: "Build your own cake or tasting flight. Use the cart to collect inspiration, then complete the custom order form so we can call and finalize pricing together.",
       viewCart: "View Cart",
       customOrderForm: "Custom Order Form"
@@ -297,6 +298,7 @@ export const translations = {
       descriptionFallback: "ხელმოწერის შექმნა, რომელიც მომზადებულია ამელის გუნდის მიერ ყოველ დილას.",
       updatingMenu: "ჩვენ ვაახლებთ ამ მენიუს. მალე შეამოწმეთ!",
       loadingMenu: "მენიუს ჩატვირთვა...",
+      retry: "ხელახლა სცადეთ",
       customOrderPreview: "შექმენით საკუთარი ტორტი ან დეგუსტაცია. გამოიყენეთ კალათა შთაგონების შესაგროვებლად, შემდეგ შეავსეთ შეკვეთის ფორმა, რათა დავურეკოთ და ერთად დავადგინოთ ფასი.",
       viewCart: "კალათის ნახვა",
       customOrderForm: "შეკვეთის ფორმა"
@@ -564,6 +566,7 @@ export const translations = {
       descriptionFallback: "Ստորագրության ստեղծագործություններ, որոնք պատրաստվում են Ամելիի թիմի կողմից ամեն առավոտ:",
       updatingMenu: "Մենք թարմացնում ենք այս մենյուն: Շուտով ստուգեք:",
       loadingMenu: "Մենյուի բեռնում...",
+      retry: "Կրկին փորձել",
       customOrderPreview: "Ստեղծեք ձեր սեփական տորթը կամ դեգուստացիան: Օգտագործեք զամբյուղը ոգեշնչում հավաքելու համար, ապա լրացրեք պատվերի ձևը, որպեսզի մենք կարողանանք զանգել և միասին վերջնականացնել գինը:",
       viewCart: "Դիտել զամբյուղ",
       customOrderForm: "Պատվերի ձև"
@@ -831,6 +834,7 @@ export const translations = {
       descriptionFallback: "Авторские творения, приготовленные командой Амели каждое утро.",
       updatingMenu: "Мы обновляем это меню. Зайдите позже!",
       loadingMenu: "Загрузка меню...",
+      retry: "Попробовать снова",
       customOrderPreview: "Создайте свой торт или дегустацию. Используйте корзину для сбора вдохновения, затем заполните форму заказа, чтобы мы могли позвонить и согласовать цену вместе.",
       viewCart: "Посмотреть корзину",
       customOrderForm: "Форма заказа"

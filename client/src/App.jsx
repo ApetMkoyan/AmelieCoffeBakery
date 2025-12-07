@@ -185,6 +185,7 @@ function App() {
         orderStatus={orderStatus}
         scrollToOrderForm={scrollToOrderForm}
         forceOrderType={forceOrderType}
+        onRetry={refetchProducts}
       />
       <Footer />
     </>

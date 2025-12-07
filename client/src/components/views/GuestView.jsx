@@ -23,6 +23,7 @@ function GuestView({
   orderStatus,
   scrollToOrderForm,
   forceOrderType,
+  onRetry,
 }) {
   const { t, language } = useLanguage();
 
@@ -61,9 +62,35 @@ function GuestView({
             subtitle={t("menu.subtitle")}
           />
           {catalogContent.isLoading ? (
-            <p>{t("menu.loadingMenu")}</p>
+            <div style={{ textAlign: "center", padding: "2rem" }}>
+              <p>{t("menu.loadingMenu")}</p>
+            </div>
           ) : catalogContent.error ? (
-            <p>{catalogContent.error}</p>
+            <div style={{ 
+              textAlign: "center", 
+              padding: "2rem",
+              maxWidth: "600px",
+              margin: "0 auto"
+            }}>
+              <p style={{ 
+                color: "#d32f2f", 
+                marginBottom: "1rem",
+                fontSize: "1.1rem"
+              }}>
+                {catalogContent.error}
+              </p>
+              <button
+                className="btn primary"
+                onClick={() => {
+                  if (onRetry) onRetry();
+                }}
+                style={{
+                  marginTop: "1rem"
+                }}
+              >
+                {t("menu.retry")}
+              </button>
+            </div>
           ) : (
             <MenuAccordion
               products={catalogContent.products}
