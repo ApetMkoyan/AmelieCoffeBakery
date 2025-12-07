@@ -174,7 +174,15 @@ function ProductManager({ products = {}, onAddProduct, onEditProduct, onDeletePr
   };
 
   const categoryItems = useMemo(() => {
-    return products[activeCategory] || [];
+    const items = products[activeCategory] || [];
+    console.log("📦 ProductManager - Category items:", {
+      activeCategory,
+      itemsCount: items.length,
+      hasProducts: Object.keys(products).length > 0,
+      categories: Object.keys(products),
+      totalProducts: Object.values(products).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0)
+    });
+    return items;
   }, [products, activeCategory]);
 
   return (

@@ -25,8 +25,18 @@ export function useProducts() {
         totalProducts: Object.values(data).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0)
       });
       
-      if (!data || Object.keys(data).length === 0) {
-        console.warn("⚠️ Products data is empty!");
+      // Check if we have any products in any category
+      const totalProducts = Object.values(data || {}).reduce(
+        (sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 
+        0
+      );
+      
+      if (!data || Object.keys(data).length === 0 || totalProducts === 0) {
+        console.warn("⚠️ Products data is empty!", {
+          hasData: !!data,
+          categoriesCount: Object.keys(data || {}).length,
+          totalProducts
+        });
         setError("No products available. Please try again later.");
       } else {
         setProducts(data);

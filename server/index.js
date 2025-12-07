@@ -240,11 +240,16 @@ app.get("/api/products", async (_req, res, next) => {
     const totalProducts = Object.values(products).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0);
     
     console.log("✅ Products loaded:", categoriesCount, "categories,", totalProducts, "total products");
+    console.log("📊 Products by category:", Object.entries(products).map(([cat, items]) => 
+      `${cat}: ${Array.isArray(items) ? items.length : 0} items`
+    ).join(", "));
     
-    if (categoriesCount === 0) {
+    if (categoriesCount === 0 || totalProducts === 0) {
       console.warn("⚠️ No products found! Returning empty object.");
+      console.warn("⚠️ Products data:", JSON.stringify(products, null, 2).substring(0, 500));
     }
     
+    // Always return the products object, even if empty
     res.json(products);
   } catch (error) {
     console.error("❌ Error loading products:", error);
