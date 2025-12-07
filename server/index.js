@@ -107,6 +107,10 @@ const migrateDataToMongo = async () => {
     
     // Check if products collection is empty
     const productsCollection = getCollection("products");
+    if (!productsCollection) {
+      console.warn("⚠️ Cannot access products collection, MongoDB might not be connected");
+      return;
+    }
     const productsCount = await productsCollection.countDocuments();
     
     if (productsCount === 0) {
@@ -114,16 +118,28 @@ const migrateDataToMongo = async () => {
       try {
         // Read from JSON file
         const productsData = await fileStorage.readJson(PRODUCTS_FILE, {});
+        console.log("📊 Products data from JSON:", {
+          categories: Object.keys(productsData).length,
+          totalProducts: Object.values(productsData).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0)
+        });
+        
         // Only migrate if we got actual data (not empty object)
         if (productsData && Object.keys(productsData).length > 0) {
           await writeJson(PRODUCTS_FILE, productsData);
-          console.log("✅ Products migrated successfully");
+          console.log("✅ Products migrated successfully to MongoDB");
+          
+          // Verify migration
+          const verifyCount = await productsCollection.countDocuments();
+          console.log("✅ Verification: MongoDB now has", verifyCount, "products");
         } else {
           console.log("⚠️ Products JSON file is empty, skipping migration");
         }
       } catch (error) {
-        console.log("⚠️ Products JSON file not found or error reading:", error.message);
+        console.error("⚠️ Products JSON file not found or error reading:", error.message);
+        console.error("⚠️ Error stack:", error.stack?.substring(0, 300));
       }
+    } else {
+      console.log("✅ MongoDB already has", productsCount, "products, skipping migration");
     }
     
     // Check if orders collection is empty
@@ -184,9 +200,22 @@ const migrateDataToMongo = async () => {
 const ensureDefaults = async () => {
   try {
     if (USE_MONGODB) {
-      await connectDB();
-      // Migrate data from JSON files to MongoDB if collections are empty
-      await migrateDataToMongo();
+      try {
+        console.log("🔄 Initializing MongoDB connection...");
+        const db = await connectDB();
+        if (db) {
+          console.log("✅ MongoDB connected, starting migration...");
+          // Migrate data from JSON files to MongoDB if collections are empty
+          await migrateDataToMongo();
+        } else {
+          console.warn("⚠️ MongoDB not available during initialization");
+          console.warn("⚠️ Server will use file storage");
+          console.warn("⚠️ MongoDB will be tried again on first request");
+        }
+      } catch (error) {
+        console.warn("⚠️ MongoDB connection failed during initialization:", error.message);
+        console.warn("⚠️ Server will continue with file storage");
+      }
     }
     
     // Initialize files with fallback values if they don't exist
@@ -246,7 +275,10 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", uptime: process.uptime() });
 });
 
-app.get("/api/products", async (_req, res, next) => {
+app.get("/api/products", async (_req, res) => {
+  // Use a separate try-catch to ensure we always return a response
+  let products = {};
+  
   try {
     console.log("📦 Fetching products from:", PRODUCTS_FILE);
     console.log("🔍 Environment:", {
@@ -256,53 +288,63 @@ app.get("/api/products", async (_req, res, next) => {
       VERCEL: process.env.VERCEL
     });
     
-    let products;
     try {
-      products = await readJson(PRODUCTS_FILE, {});
+      const data = await readJson(PRODUCTS_FILE, {});
+      // Ensure we got a valid object
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        products = data;
+      } else {
+        console.warn("⚠️ Invalid products data format, using empty object");
+        products = {};
+      }
     } catch (readError) {
-      console.error("❌ Error reading products file:", readError);
-      console.error("❌ Read error details:", {
-        message: readError.message,
-        code: readError.code,
-        path: readError.path,
-        stack: readError.stack
-      });
-      // Return empty object instead of throwing error
+      console.error("❌ Error reading products:", readError.message);
+      console.error("❌ Error stack:", readError.stack?.substring(0, 200));
+      // Use empty object as fallback
       products = {};
     }
     
-    // Ensure products is an object
+    // Ensure products is a valid object
     if (!products || typeof products !== "object" || Array.isArray(products)) {
       console.warn("⚠️ Products data is not a valid object, using empty object");
       products = {};
     }
     
     const categoriesCount = Object.keys(products).length;
-    const totalProducts = Object.values(products).reduce((sum, cat) => sum + (Array.isArray(cat) ? cat.length : 0), 0);
+    const totalProducts = Object.values(products).reduce((sum, cat) => {
+      return sum + (Array.isArray(cat) ? cat.length : 0);
+    }, 0);
     
     console.log("✅ Products loaded:", categoriesCount, "categories,", totalProducts, "total products");
-    console.log("📊 Products by category:", Object.entries(products).map(([cat, items]) => 
-      `${cat}: ${Array.isArray(items) ? items.length : 0} items`
-    ).join(", "));
     
-    if (categoriesCount === 0 || totalProducts === 0) {
+    if (categoriesCount > 0 && totalProducts > 0) {
+      console.log("📊 Products by category:", Object.entries(products).map(([cat, items]) => 
+        `${cat}: ${Array.isArray(items) ? items.length : 0} items`
+      ).join(", "));
+    } else {
       console.warn("⚠️ No products found! Returning empty object.");
-      console.warn("⚠️ Products data type:", typeof products);
-      console.warn("⚠️ Products data keys:", Object.keys(products));
     }
-    
-    // Always return the products object, even if empty
-    res.json(products);
   } catch (error) {
-    console.error("❌ Error loading products:", error);
+    // Catch any unexpected errors
+    console.error("❌ Unexpected error in /api/products:", error);
     console.error("❌ Error name:", error.name);
     console.error("❌ Error message:", error.message);
-    console.error("❌ Error stack:", error.stack);
-    console.error("❌ Error code:", error.code);
-    
-    // Return empty object instead of error to prevent client-side issues
-    console.warn("⚠️ Returning empty products object due to error");
-    res.status(200).json({});
+    console.error("❌ Error stack:", error.stack?.substring(0, 500));
+    // Ensure products is an empty object
+    products = {};
+  }
+  
+  // Always return a valid JSON response, never throw
+  try {
+    res.status(200).json(products);
+  } catch (sendError) {
+    console.error("❌ Error sending response:", sendError);
+    // Last resort - try to send empty object
+    try {
+      res.status(200).json({});
+    } catch (e) {
+      console.error("❌ Failed to send any response:", e);
+    }
   }
 });
 
@@ -380,47 +422,55 @@ app.use((err, req, res, next) => {
 });
 
 app.post("/api/supervisor/login", (req, res) => {
-  const { email, passcode } = req.body || {};
-  if (!email || !passcode) {
-    return res.status(400).json({ error: "Email and passcode are required" });
+  try {
+    const { email, passcode } = req.body || {};
+    if (!email || !passcode) {
+      return res.status(400).json({ error: "Email and passcode are required" });
+    }
+    
+    // Trim and normalize inputs
+    const trimmedEmail = String(email).trim();
+    const trimmedPasscode = String(passcode).trim();
+    
+    // Debug logging
+    console.log("🔐 Login attempt:", {
+      receivedEmail: trimmedEmail,
+      receivedEmailLength: trimmedEmail.length,
+      receivedPasscodeLength: trimmedPasscode.length,
+      expectedLogin: SUPERVISOR_LOGIN,
+      expectedLoginLength: SUPERVISOR_LOGIN.length,
+      expectedPasscodeLength: SUPERVISOR_PASSCODE.length,
+      emailMatch: trimmedEmail === SUPERVISOR_LOGIN,
+      passcodeMatch: trimmedPasscode === SUPERVISOR_PASSCODE,
+    });
+    
+    // Strict comparison
+    if (trimmedEmail !== SUPERVISOR_LOGIN) {
+      console.log("❌ Login failed: Invalid email");
+      console.log("   Expected:", JSON.stringify(SUPERVISOR_LOGIN));
+      console.log("   Received:", JSON.stringify(trimmedEmail));
+      return res.status(401).json({ error: "Invalid login" });
+    }
+    if (trimmedPasscode !== SUPERVISOR_PASSCODE) {
+      console.log("❌ Login failed: Invalid password");
+      console.log("   Expected length:", SUPERVISOR_PASSCODE.length);
+      console.log("   Received length:", trimmedPasscode.length);
+      return res.status(401).json({ error: "Invalid password" });
+    }
+    
+    console.log("✅ Login successful for:", trimmedEmail);
+    const token = nanoid();
+    activeSessions.set(token, { email: trimmedEmail, signedInAt: new Date().toISOString() });
+    res.json({ token, profile: { email: trimmedEmail } });
+  } catch (error) {
+    console.error("❌ Error in /api/supervisor/login:", error);
+    console.error("❌ Error details:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack?.substring(0, 500)
+    });
+    res.status(500).json({ error: "A server error has occurred" });
   }
-  
-  // Trim and normalize inputs
-  const trimmedEmail = String(email).trim();
-  const trimmedPasscode = String(passcode).trim();
-  
-  // Debug logging
-  console.log("🔐 Login attempt:", {
-    receivedEmail: trimmedEmail,
-    receivedEmailLength: trimmedEmail.length,
-    receivedPasscodeLength: trimmedPasscode.length,
-    expectedLogin: SUPERVISOR_LOGIN,
-    expectedLoginLength: SUPERVISOR_LOGIN.length,
-    expectedPasscodeLength: SUPERVISOR_PASSCODE.length,
-    emailMatch: trimmedEmail === SUPERVISOR_LOGIN,
-    passcodeMatch: trimmedPasscode === SUPERVISOR_PASSCODE,
-    emailExactMatch: JSON.stringify(trimmedEmail) === JSON.stringify(SUPERVISOR_LOGIN),
-    passcodeExactMatch: JSON.stringify(trimmedPasscode) === JSON.stringify(SUPERVISOR_PASSCODE)
-  });
-  
-  // Strict comparison
-  if (trimmedEmail !== SUPERVISOR_LOGIN) {
-    console.log("❌ Login failed: Invalid email");
-    console.log("   Expected:", JSON.stringify(SUPERVISOR_LOGIN));
-    console.log("   Received:", JSON.stringify(trimmedEmail));
-    return res.status(401).json({ error: "Invalid login" });
-  }
-  if (trimmedPasscode !== SUPERVISOR_PASSCODE) {
-    console.log("❌ Login failed: Invalid password");
-    console.log("   Expected length:", SUPERVISOR_PASSCODE.length);
-    console.log("   Received length:", trimmedPasscode.length);
-    return res.status(401).json({ error: "Invalid password" });
-  }
-  
-  console.log("✅ Login successful for:", trimmedEmail);
-  const token = nanoid();
-  activeSessions.set(token, { email: trimmedEmail, signedInAt: new Date().toISOString() });
-  res.json({ token, profile: { email: trimmedEmail } });
 });
 
 app.post("/api/products", authenticateSupervisor, async (req, res, next) => {
@@ -847,8 +897,18 @@ app.get("*", (_req, res, next) => {
 });
 
 app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
+  console.error("❌ Unhandled error:", err);
+  console.error("❌ Error name:", err.name);
+  console.error("❌ Error message:", err.message);
+  console.error("❌ Error stack:", err.stack?.substring(0, 500));
+  
+  // Always return a valid JSON response
+  if (!res.headersSent) {
+    res.status(500).json({ 
+      error: "A server error has occurred",
+      message: process.env.NODE_ENV === "development" ? err.message : undefined
+    });
+  }
 });
 
 // Initialize defaults
@@ -869,22 +929,36 @@ ensureDefaults()
     // Check MongoDB connection if using MongoDB
     if (USE_MONGODB) {
       try {
-        await connectDB();
-        console.log("✅ MongoDB connected successfully");
-        
-        // Test read to verify connection works
-        const testProducts = await readJson(PRODUCTS_FILE, {});
-        console.log("✅ MongoDB read test successful:", Object.keys(testProducts).length, "categories");
+        const db = await connectDB();
+        if (db) {
+          console.log("✅ MongoDB connected successfully");
+          
+          // Test read to verify connection works
+          try {
+            const testProducts = await readJson(PRODUCTS_FILE, {});
+            console.log("✅ MongoDB read test successful:", Object.keys(testProducts).length, "categories");
+          } catch (readError) {
+            console.warn("⚠️ MongoDB read test failed, but connection is OK:", readError.message);
+          }
+        } else {
+          console.warn("⚠️ MongoDB connection failed - cluster might be paused");
+          console.warn("⚠️ Server will use file storage as fallback");
+          console.warn("⚠️ To fix: Go to https://cloud.mongodb.com and resume your cluster");
+        }
       } catch (error) {
         console.error("❌ MongoDB connection error:", error.message);
-        console.error("⚠️ Server will continue but may have issues loading data");
+        console.warn("⚠️ Server will continue using file storage as fallback");
       }
     } else {
       // Check file storage
-      const testProducts = await readJson(PRODUCTS_FILE, {});
-      console.log("✅ File storage read test successful:", Object.keys(testProducts).length, "categories");
-      if (Object.keys(testProducts).length === 0) {
-        console.warn("⚠️ No products found in file storage! Make sure products.json exists and has data.");
+      try {
+        const testProducts = await readJson(PRODUCTS_FILE, {});
+        console.log("✅ File storage read test successful:", Object.keys(testProducts).length, "categories");
+        if (Object.keys(testProducts).length === 0) {
+          console.warn("⚠️ No products found in file storage! Make sure products.json exists and has data.");
+        }
+      } catch (error) {
+        console.warn("⚠️ File storage read test failed:", error.message);
       }
     }
     

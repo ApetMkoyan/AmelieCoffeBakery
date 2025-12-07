@@ -11,29 +11,58 @@ const getCollectionName = (fileName) => {
 export const readJson = async (fileName, fallback) => {
   try {
     const collectionName = getCollectionName(fileName);
+    
+    // Try to ensure connection before reading
+    const { connectDB } = await import("./db.js");
+    let db = await connectDB();
+    
+    // If still not connected, return fallback
+    if (!db) {
+      console.warn(`⚠️ MongoDB not available for ${fileName}, using fallback`);
+      return fallback;
+    }
+    
     const collection = getCollection(collectionName);
+    
+    // If collection is null (MongoDB not connected), return fallback
+    if (!collection) {
+      console.warn(`⚠️ MongoDB not available for ${fileName}, using fallback`);
+      return fallback;
+    }
     
     // For products, orders, consumables, daily-records
     if (collectionName === "products") {
-      const products = await collection.find({}).toArray();
-      // Convert array to object grouped by category
-      const result = {};
-      products.forEach((product) => {
-        if (!result[product.category]) {
-          result[product.category] = [];
-        }
-        result[product.category].push(product);
-      });
-      return result;
+      try {
+        const products = await collection.find({}).toArray();
+        console.log(`📦 Found ${products.length} products in MongoDB`);
+        
+        // Convert array to object grouped by category
+        const result = {};
+        products.forEach((product) => {
+          // Ensure product has a category
+          const category = product.category || "drinks";
+          if (!result[category]) {
+            result[category] = [];
+          }
+          result[category].push(product);
+        });
+        
+        console.log(`✅ Products grouped into ${Object.keys(result).length} categories`);
+        return result;
+      } catch (queryError) {
+        console.error(`❌ Error querying products from MongoDB:`, queryError.message);
+        throw queryError;
+      }
     }
     
     // For arrays (orders, consumables, daily-records)
     const items = await collection.find({}).toArray();
     return items.length > 0 ? items : fallback;
   } catch (error) {
-    console.error(`Error reading ${fileName}:`, error);
-    // If collection doesn't exist, return fallback
+    console.error(`Error reading ${fileName} from MongoDB:`, error.message);
+    // If collection doesn't exist or connection failed, return fallback
     if (fallback !== undefined) {
+      console.warn(`⚠️ Using fallback for ${fileName} due to MongoDB error`);
       return fallback;
     }
     throw error;
@@ -43,7 +72,24 @@ export const readJson = async (fileName, fallback) => {
 export const writeJson = async (fileName, data) => {
   try {
     const collectionName = getCollectionName(fileName);
+    
+    // Try to ensure connection before writing
+    const { connectDB } = await import("./db.js");
+    let db = await connectDB();
+    
+    // If still not connected, log warning but don't throw
+    if (!db) {
+      console.warn(`⚠️ MongoDB not available for writing ${fileName}, operation skipped`);
+      return; // Silently fail - app will continue with file storage
+    }
+    
     const collection = getCollection(collectionName);
+    
+    // If collection is null (MongoDB not connected), log warning but don't throw
+    if (!collection) {
+      console.warn(`⚠️ MongoDB not available for writing ${fileName}, operation skipped`);
+      return; // Silently fail - app will continue with file storage
+    }
     
     if (collectionName === "products") {
       // Products is an object with categories as keys
@@ -74,8 +120,9 @@ export const writeJson = async (fileName, data) => {
       }
     }
   } catch (error) {
-    console.error(`Error writing ${collectionName}:`, error);
-    throw error;
+    console.error(`Error writing ${fileName} to MongoDB:`, error.message);
+    // Don't throw - let the app continue, it will use file storage as fallback
+    console.warn(`⚠️ Write operation failed for ${fileName}, but app will continue`);
   }
 };
 
